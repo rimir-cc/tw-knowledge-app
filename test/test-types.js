@@ -41,6 +41,8 @@ describe("knowledge-app: types", function() {
 		expect(ids).toContain("idea");
 		expect(ids).toContain("source");
 		expect(ids).toContain("sink");
+		expect(ids).toContain("conversation");
+		expect(ids).toContain("note");
 		expect(ids).toContain("pao");
 		expect(ids).toContain("place");
 		expect(ids).toContain("index");
@@ -51,7 +53,7 @@ describe("knowledge-app: types", function() {
 		expect(ids).toContain("meta");
 		expect(ids).toContain("attachment");
 		expect(ids).toContain("image");
-		expect(ids.length).toBe(13);
+		expect(ids.length).toBe(15);
 	});
 
 	it("knowledge.type-caption resolves caption from JSON or falls back to the id", function() {

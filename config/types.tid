@@ -5,6 +5,8 @@ type: application/json
   {"id":"idea",         "caption":"Idea",         "icon":"💡", "group":"core"},
   {"id":"source",       "caption":"Source",       "icon":"📚", "group":"core"},
   {"id":"sink",         "caption":"Sink",         "icon":"📤", "group":"core"},
+  {"id":"conversation", "caption":"Conversation", "icon":"💬", "group":"core"},
+  {"id":"note",         "caption":"Note",         "icon":"📝", "group":"core"},
   {"id":"pao",          "caption":"PAO",          "icon":"👤", "group":"entity"},
   {"id":"place",        "caption":"Place",        "icon":"📍", "group":"entity"},
   {"id":"index",        "caption":"Index",        "icon":"🗂", "group":"structural"},
