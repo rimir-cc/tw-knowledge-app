@@ -21,6 +21,8 @@ jobs:
           git clone --depth 1 https://github.com/rimir-cc/tw-namespace.git /tmp/plugins/rimir/namespace
           git clone --depth 1 https://github.com/rimir-cc/tw-statewrap.git /tmp/plugins/rimir/statewrap
           git clone --depth 1 https://github.com/rimir-cc/tw-theme.git     /tmp/plugins/rimir/theme
+          # namespace's test-edition references a file outside the plugin (dev-wiki only) — strip it for isolated CI
+          rm -rf /tmp/plugins/rimir/namespace/test-edition
           TIDDLYWIKI_CLI_MODE=1 TIDDLYWIKI_PLUGIN_PATH=/tmp/plugins npx tiddlywiki test-edition --test spec="knowledge-app"
 
   notify:
