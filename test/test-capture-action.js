@@ -114,4 +114,86 @@ describe("knowledge-app: quick capture", function() {
 		expect(t.fields.text.indexOf("\\context")).toBe(-1);
 		expect(t.fields.context).toBe("knowledge");
 	});
+
+	// --- Collision detection (Create button's disabled filter) ---
+
+	function disabledFilterValue(wiki, rawTitleText) {
+		// Mirrors the Create button's disabled filter chain in
+		// procedures/quick-capture-modal.tid. Using <$text> so we can read
+		// back the computed value from the rendered DOM.
+		wiki.addTiddler({title: "$:/state/rimir/knowledge-app/capture/title", text: rawTitleText});
+		var text = [
+			'<$let',
+			'  titleState="$:/state/rimir/knowledge-app/capture/title"',
+			'  prefix="knowledge/inbox/"',
+			'  rawTitle={{{ [<titleState>get[text]] }}}',
+			'  finalTitle={{{ [<rawTitle>prefix[knowledge/]then<rawTitle>] ~[<rawTitle>addprefix<prefix>] }}}',
+			'  titleExists={{{ [<finalTitle>is[tiddler]] ~[<finalTitle>is[shadow]] +[limit[1]] }}}',
+			'  isDisabled={{{ [<rawTitle>is[blank]then[yes]] ~[<titleExists>!is[blank]then[yes]] ~[[no]] }}}',
+			'>',
+			'>>><$text text=<<isDisabled>>/><<<',
+			'</$let>'
+		].join("\n");
+		var parser = wiki.parseText("text/vnd.tiddlywiki", text, { parseAsInline: false });
+		var widget = wiki.makeWidget(parser, { document: $tw.fakeDocument });
+		var container = $tw.fakeDocument.createElement("div");
+		widget.render(container, null);
+		var m = (container.textContent || "").match(/>>>(.*)<<</);
+		return m ? m[1] : "";
+	}
+
+	it("disables Create when title is blank", function() {
+		var wiki = setupWiki([]);
+		expect(disabledFilterValue(wiki, "")).toBe("yes");
+	});
+
+	it("disables Create when the resolved title (with auto-prefix) collides with an existing tiddler", function() {
+		var wiki = setupWiki([{title: "knowledge/inbox/Foo", text: "exists"}]);
+		expect(disabledFilterValue(wiki, "Foo")).toBe("yes");
+	});
+
+	it("disables Create when the user types a full path that already exists", function() {
+		var wiki = setupWiki([{title: "knowledge/llm/test/sum", text: "exists"}]);
+		expect(disabledFilterValue(wiki, "knowledge/llm/test/sum")).toBe("yes");
+	});
+
+	it("enables Create for a fresh title", function() {
+		var wiki = setupWiki([{title: "knowledge/inbox/Foo", text: "exists"}]);
+		expect(disabledFilterValue(wiki, "NewIdea")).toBe("no");
+	});
+
+	it("enables Create for a fresh full path", function() {
+		var wiki = setupWiki([]);
+		expect(disabledFilterValue(wiki, "knowledge/topics/programming/typescript")).toBe("no");
+	});
+
+	it("clicking a suggestion sets the title state to the FULL suggestion title", function() {
+		// Reproduce the suggestion-click action chain from the modal:
+		//   <$action-setfield $tiddler=<<titleState>> text=<<suggestion>>/>
+		// and verify the title state ends up holding the full title, not
+		// some truncated version.
+		var wiki = setupWiki([{title: "knowledge/llm/test/sum", text: "exists"}]);
+		// Pre-populate state with partial input (what the user typed before clicking)
+		wiki.addTiddler({title: "$:/state/rimir/knowledge-app/capture/title", text: "test"});
+		var text = [
+			'<$let',
+			'  titleState="$:/state/rimir/knowledge-app/capture/title"',
+			'  suggestion="knowledge/llm/test/sum"',
+			'>',
+			'<$button>',
+			'<$action-setfield $tiddler=<<titleState>> text=<<suggestion>>/>',
+			'click me',
+			'</$button>',
+			'</$let>'
+		].join("\n");
+		var parser = wiki.parseText("text/vnd.tiddlywiki", text, { parseAsInline: false });
+		var widgetNode = wiki.makeWidget(parser, { document: $tw.fakeDocument });
+		var container = $tw.fakeDocument.createElement("div");
+		widgetNode.render(container, null);
+		var btn = findWidget(widgetNode, "button");
+		expect(btn).not.toBeNull();
+		btn.invokeActions(btn, {});
+		var t = wiki.getTiddler("$:/state/rimir/knowledge-app/capture/title");
+		expect(t.fields.text).toBe("knowledge/llm/test/sum");
+	});
 });

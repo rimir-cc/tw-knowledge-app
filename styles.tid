@@ -254,13 +254,61 @@ type: text/vnd.tiddlywiki
 .kn-modal-body textarea {
     width: 100%;
     padding: 6px 8px;
-    border: 1px solid <<colour tiddler-border>>;
+    border: 1px solid <<colour muted-foreground>>;
     border-radius: 4px;
     font-size: 14px;
     box-sizing: border-box;
+    background: <<colour page-background>>;
+    color: <<colour foreground>>;
+}
+.kn-modal-body input:focus,
+.kn-modal-body textarea:focus {
+    outline: none;
+    border-color: <<colour primary>>;
+    box-shadow: 0 0 0 2px <<colour primary>>33;
 }
 .kn-modal-body textarea { min-height: 100px; resize: vertical; }
 .kn-modal-actions { display: flex; gap: 6px; justify-content: flex-end; margin-top: 4px; }
+
+/* Capture modal — title-completion suggestions */
+.kn-suggestions {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    max-height: 180px;
+    overflow-y: auto;
+    border: 1px solid <<colour tiddler-border>>;
+    border-radius: 4px;
+    padding: 4px;
+    background: <<colour background>>;
+    font-size: 0.85em;
+}
+.kn-suggestion {
+    text-align: left;
+    padding: 4px 8px;
+    border-radius: 3px;
+    color: <<colour foreground>>;
+    font-family: monospace;
+}
+.kn-suggestion:hover {
+    background: <<colour primary>>;
+    color: <<colour background>>;
+}
+
+/* Capture modal — title-collision warning */
+.kn-collision-warning {
+    padding: 6px 8px;
+    border-left: 3px solid <<colour alert-border>>;
+    background: <<colour alert-background>>;
+    color: <<colour alert-foreground>>;
+    font-size: 0.85em;
+    border-radius: 3px;
+}
+.kn-collision-warning code {
+    font-family: monospace;
+    background: transparent;
+    padding: 0;
+}
 
 /* Inline body editor */
 .kn-inline-edit-wrap textarea.tc-edit-texteditor,

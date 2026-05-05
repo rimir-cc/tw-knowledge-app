@@ -27,7 +27,40 @@ Capturing into area: <strong><<activeArea>></strong>
 </div>
 </$list>
 
-<$edit-text tiddler=<<titleState>> tag="input" placeholder="Title (e.g. typescript-tips)" focus="true" class="tc-edit-texteditor"/>
+<$edit-text tiddler=<<titleState>> tag="input" placeholder="Title (e.g. typescript-tips)" focus="true" class="tc-edit-texteditor kn-title-input"/>
+
+<!-- Title-derived state — kept in an inner $let so the input above stays in a
+     stable scope (per tw-edit-text-rerender memory). The body $edit-text and
+     button below also need the same vars but compute them in their own scopes. -->
+<$let
+	rawTitle={{{ [<titleState>get[text]] }}}
+	areaPrefix={{{ [<activeArea>!is[blank]then[knowledge/]addsuffix<activeArea>addsuffix[/]] ~[[$:/config/rimir/knowledge-app/capture-prefix]get[text]] ~[[knowledge/inbox/]] }}}
+	finalTitle={{{ [<rawTitle>prefix[knowledge/]then<rawTitle>] ~[<rawTitle>addprefix<areaPrefix>] }}}
+	titleExists={{{ [<finalTitle>is[tiddler]] ~[<finalTitle>is[shadow]] +[limit[1]] }}}
+>
+
+<!-- Suggestions: existing knowledge tiddlers matching what the user typed.
+     Threshold of 2 chars avoids dumping the whole namespace on first keystroke. -->
+<$list filter="[<rawTitle>length[]compare:integer:gteq[2]]" variable="_">
+<div class="kn-suggestions">
+<$list filter="[all[tiddlers]prefix[knowledge/]search:title<rawTitle>!match<finalTitle>limit[8]]" variable="suggestion" emptyMessage="">
+<$button class="tc-btn-invisible kn-suggestion" tooltip="Use this title">
+<$action-setfield $tiddler=<<titleState>> text=<<suggestion>>/>
+<$action-sendmessage $message="tm-focus-rewind" $param=".kn-title-input" state=<<titleState>>/>
+<$text text=<<suggestion>>/>
+</$button>
+</$list>
+</div>
+</$list>
+
+<!-- Collision warning: shown when the resolved title already exists. -->
+<$list filter="[<titleExists>!is[blank]]" variable="_">
+<div class="kn-collision-warning">
+⚠ A note titled <code><$text text=<<finalTitle>>/></code> already exists.
+</div>
+</$list>
+
+</$let>
 
 <div style="display:flex;gap:8px;align-items:center;font-size:0.9em;">
 <label style="color:<<colour muted-foreground>>;">Type:</label>
@@ -60,8 +93,9 @@ Cancel
 	finalTitle={{{ [<rawTitle>prefix[knowledge/]then<rawTitle>] ~[<rawTitle>addprefix<prefix>] }}}
 	contextValue={{{ [<activeArea>!is[blank]then[knowledge/]addsuffix<activeArea>] ~[[knowledge]] }}}
 	rawType={{{ [<typeState>get[text]] ~[[idea]] }}}
+	titleExists={{{ [<finalTitle>is[tiddler]] ~[<finalTitle>is[shadow]] +[limit[1]] }}}
 >
-<$button class="rr-link-btn" disabled={{{ [<rawTitle>!is[blank]then[]] ~[[true]] }}}>
+<$button class="rr-link-btn" disabled={{{ [<rawTitle>is[blank]then[yes]] ~[<titleExists>!is[blank]then[yes]] ~[[no]] }}}>
 <$action-createtiddler $basetitle=<<finalTitle>> $savetitle="$:/state/rimir/knowledge-app/capture/last-saved" text=<<rawBody>> tags="$:/tags/rimir/knowledge-app/note" kn.tier="fleeting" kn.type=<<rawType>> context=<<contextValue>>/>
 <$action-setfield $tiddler="$:/state/rimir/knowledge-app/capture/open" text=""/>
 <$action-setfield $tiddler=<<titleState>> text=""/>
