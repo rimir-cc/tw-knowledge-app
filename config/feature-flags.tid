@@ -1,0 +1,10 @@
+title: $:/plugins/rimir/knowledge-app/config/feature-flags
+type: text/vnd.tiddlywiki
+
+These shadow tiddlers enable namespace feature flags by default when the plugin is installed. Users can override them by creating tiddlers of the same titles with text "no".
+
+* `$:/config/rimir/namespace/walk-up` — sibling refs walk up the source path
+* `$:/config/rimir/namespace/aliases` — exact + pattern aliases
+* `$:/config/rimir/namespace/pseudo-expansion` — `_latest`, `_index`, etc.
+
+The actual config tiddlers are defined separately so they can each have their own `text` field.

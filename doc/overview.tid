@@ -1,0 +1,43 @@
+rdt.hub-category: app
+rdt.hub-category-name: Apps
+rdt.hub-order: 5
+rdt.order: 1
+rdt.plugin-key: knowledge-app
+rdt.plugin-name: knowledge app
+rdt.plugin-subtitle: Zettelkasten-style knowledge surface on top of namespace + appify
+rdt.section: Overview
+title: $:/plugins/rimir/knowledge-app/doc/overview
+type: text/vnd.tiddlywiki
+
+<$transclude $tiddler="$:/plugins/rimir/doc-template/templates/page">
+<$fill $name="body">
+
+!! What it does
+
+A zettelkasten-style note app for TiddlyWiki. Notes live under the `knowledge/…` title namespace and link via short refs (`[[Foo]]`) thanks to the [[namespace|$:/plugins/rimir/namespace]] plugin. The app provides a clear home for those notes — sidebar navigation, a Note view with backlinks, a Write-tab maintenance dashboard, and a quick-capture flow.
+
+!! Features
+
+* Quick-capture from the topbar — title + body modal, prepends `\context knowledge`, lands at `knowledge/inbox/<slug>`.
+* Three note tiers: `fleeting` → `developing` → `evergreen`. Click the pill to promote.
+* Backlinks panel reads namespace's reverse index (`ns-backlinks`).
+* Write tab — orphans, stubs, dead-ends, broken refs.
+* Search over title + text.
+* Starter mount `kn` so any tiddler can write `[[kn/topics/foo]]` and reach knowledge content.
+* Custom pseudo `_index` — inside an absolute ref, `…/_index` resolves to the topic's `index` or `README`.
+
+!! Prerequisites
+
+* [[appify|$:/plugins/rimir/appify]]
+* [[namespace|$:/plugins/rimir/namespace]]
+* [[theme|$:/plugins/rimir/theme]]
+
+!! Quick start
+
+# Open the FAB → "Knowledge".
+# Topbar → ''+ Note''. Type a title and (optionally) some body wikitext.
+# Type `[[Foo]]` somewhere to link a (possibly future) note.
+# Open Write to see what needs work.
+
+</$fill>
+</$transclude>

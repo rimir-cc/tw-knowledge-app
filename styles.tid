@@ -1,0 +1,330 @@
+tags: $:/tags/Stylesheet
+title: $:/plugins/rimir/knowledge-app/styles
+type: text/vnd.tiddlywiki
+
+/* Topbar nav */
+.kn-topbar {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.kn-topbar-row {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.kn-topbar-btn {
+    padding: 4px 12px;
+    border: none;
+    border-radius: 4px;
+    background: none;
+    cursor: pointer;
+    font-size: 14px;
+    white-space: nowrap;
+}
+.kn-topbar-btn:hover { background: rgba(0,0,0,0.05); }
+.kn-topbar-active { background: rgba(0,0,0,0.08); font-weight: bold; }
+.kn-topbar-spacer { flex: 1; }
+.kn-topbar-search input {
+    padding: 4px 8px;
+    border: 1px solid <<colour tiddler-border>>;
+    border-radius: 4px;
+    min-width: 180px;
+}
+
+/* Area pill row */
+.kn-topbar-areas { font-size: 13px; }
+.kn-area-pill {
+    border: 1px solid transparent;
+    border-radius: 999px;
+    padding: 2px 10px;
+}
+.kn-area-pill.kn-topbar-active {
+    background: <<colour primary>>;
+    color: white;
+    border-color: <<colour primary>>;
+}
+.kn-area-add {
+    color: <<colour muted-foreground>>;
+    border: 1px dashed <<colour tiddler-border>>;
+}
+.kn-area-add:hover { color: <<colour foreground>>; }
+
+/* Back button + breadcrumb row */
+.kn-nav-row { gap: 8px; }
+.kn-back-btn {
+    padding: 2px 8px;
+    color: <<colour muted-foreground>>;
+    font-size: 0.9em;
+    cursor: pointer;
+}
+.kn-back-btn:hover { color: <<colour foreground>>; background: rgba(0,0,0,0.05); border-radius: 3px; }
+
+/* Sidebar */
+.kn-side { padding: 8px; font-size: 13px; }
+.kn-side-section { font-weight: 700; margin: 8px 0 4px; }
+.kn-collapsible-header {
+    display: block;
+    width: 100%;
+    padding: 4px 0;
+    text-align: left;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+.kn-collapsible-header:hover { background: rgba(0,0,0,0.04); }
+.kn-collapse-chevron {
+    display: inline-block;
+    width: 1em;
+    color: <<colour muted-foreground>>;
+    margin-right: 2px;
+    font-size: 0.85em;
+}
+.kn-nav-item {
+    display: block;
+    width: 100%;
+    padding: 4px 10px;
+    margin: 1px 0;
+    border: none;
+    border-radius: 4px;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+    font-size: 13px;
+}
+.kn-nav-item:hover { background: rgba(0,0,0,0.05); }
+.kn-nav-item.kn-selected { background: rgba(0,0,0,0.08); font-weight: bold; }
+
+/* Tier pills */
+.kn-tier-pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 0.75em;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border: none;
+    cursor: pointer;
+}
+.kn-tier-fleeting { background: #fdebd0; color: #7a4f01; }
+.kn-tier-developing { background: #d4e6f1; color: #1b4f72; }
+.kn-tier-evergreen { background: #d4efdf; color: #145a32; }
+
+/* Type pill */
+.kn-type-pill {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 0.8em;
+    font-weight: 500;
+    border: 1px solid <<colour tiddler-border>>;
+    background: <<colour tiddler-info-background>>;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.kn-type-pill:hover { background: rgba(0,0,0,0.05); }
+
+/* Type popup */
+.kn-type-popup {
+    background: <<colour tiddler-background>>;
+    border: 1px solid <<colour tiddler-border>>;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    padding: 8px;
+    min-width: 200px;
+    z-index: 9000;
+}
+.kn-type-popup-group { margin-bottom: 8px; }
+.kn-type-popup-group:last-child { margin-bottom: 0; }
+.kn-type-popup-group-header {
+    font-size: 0.7em;
+    color: <<colour muted-foreground>>;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 2px;
+    padding: 0 4px;
+}
+.kn-type-popup-item {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 4px 8px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 0.9em;
+    border-radius: 4px;
+}
+.kn-type-popup-item:hover { background: rgba(0,0,0,0.05); }
+.kn-type-popup-active { background: rgba(0,0,0,0.08); font-weight: 600; }
+
+/* Browse type-chip row */
+.kn-types-row { margin-top: 4px; flex-wrap: wrap; }
+
+/* Note view */
+.kn-note-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid <<colour tiddler-border>>;
+}
+.kn-note-header h2 { margin: 0; flex: 1; font-size: 1.4em; }
+.kn-note-body { line-height: 1.5; }
+.kn-note-actions { display: flex; gap: 6px; }
+
+/* Backlinks panel */
+.kn-backlinks {
+    margin-top: 24px;
+    padding-top: 12px;
+    border-top: 1px solid <<colour tiddler-border>>;
+}
+.kn-backlinks-title { font-weight: 600; font-size: 0.95em; margin-bottom: 6px; }
+.kn-backlinks-empty { color: <<colour muted-foreground>>; font-style: italic; font-size: 0.9em; }
+
+/* Note card */
+.kn-note-card {
+    padding: 6px 10px;
+    border: 1px solid <<colour tiddler-border>>;
+    border-radius: 6px;
+    margin-bottom: 4px;
+    background: <<colour tiddler-info-background>>;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.kn-note-card:hover { background: rgba(0,0,0,0.03); }
+.kn-note-card-title { flex: 1; font-weight: 500; }
+.kn-note-card-meta { font-size: 0.8em; color: <<colour muted-foreground>>; }
+
+/* Write maintenance grid */
+.kn-write-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+}
+.kn-write-col h3 { margin-top: 0; font-size: 1em; }
+.kn-write-empty { color: <<colour muted-foreground>>; font-style: italic; font-size: 0.9em; }
+
+/* Filter chips */
+.kn-chips { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+.kn-chip {
+    padding: 3px 10px;
+    border: 1px solid <<colour tiddler-border>>;
+    border-radius: 999px;
+    font-size: 0.85em;
+    background: none;
+    cursor: pointer;
+}
+.kn-chip.kn-chip-active { background: <<colour primary>>; color: white; border-color: <<colour primary>>; }
+
+/* Capture modal */
+.kn-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.kn-modal {
+    background: <<colour tiddler-background>>;
+    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    min-width: 360px;
+    max-width: 90vw;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+.kn-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    border-bottom: 1px solid <<colour tiddler-border>>;
+}
+.kn-modal-body { padding: 14px; display: flex; flex-direction: column; gap: 8px; min-width: 320px; }
+.kn-modal-body input,
+.kn-modal-body textarea {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid <<colour tiddler-border>>;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+.kn-modal-body textarea { min-height: 100px; resize: vertical; }
+.kn-modal-actions { display: flex; gap: 6px; justify-content: flex-end; margin-top: 4px; }
+
+/* Inline body editor */
+.kn-inline-edit-wrap textarea.tc-edit-texteditor,
+.kn-inline-edit-wrap iframe.tc-edit-texteditor {
+    width: 100%;
+    min-height: 480px;
+    resize: vertical;
+    font-size: 14px;
+    line-height: 1.5;
+}
+.kn-inline-edit-wrap .rr-text-editor-host { width: 100%; }
+
+/* Delete confirmation */
+.kn-del-trigger { color: <<colour muted-foreground>>; padding: 2px 6px; }
+.kn-del-trigger:hover { color: <<colour alert-highlight>>; }
+.kn-del-confirm { display: inline-flex; align-items: center; gap: 6px; padding: 0 4px; }
+.kn-del-yes {
+    padding: 2px 10px;
+    border: 1px solid <<colour alert-highlight>>;
+    border-radius: 3px;
+    background: <<colour alert-highlight>>;
+    color: white;
+    cursor: pointer;
+    font-size: 0.85em;
+}
+.kn-del-no { color: <<colour muted-foreground>>; padding: 2px 6px; }
+
+/* Popup edit (full TW EditTemplate inside an overlay) */
+.kn-popup-edit-overlay {
+    align-items: stretch;
+    padding: 24px;
+}
+.kn-popup-edit {
+    background: <<colour tiddler-background>>;
+    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    width: min(960px, calc(100vw - 48px));
+    max-height: calc(100vh - 48px);
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.kn-popup-edit-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    border-bottom: 1px solid <<colour tiddler-border>>;
+    flex-shrink: 0;
+}
+.kn-popup-edit-actions { display: flex; gap: 6px; }
+.kn-popup-edit-content {
+    flex: 1;
+    overflow: auto;
+    padding: 16px;
+}
+
+/* Strong unresolved hint, scoped to the app */
+.kn-app .tc-tiddlylink.ns-unresolved {
+    color: <<colour muted-foreground>>;
+    text-decoration: underline dashed;
+    text-underline-offset: 2px;
+}
+.kn-app .tc-tiddlylink.ns-unresolved::after { content: " +"; opacity: 0.6; }
+
+.kn-placeholder { padding: 40px 20px; text-align: center; color: <<colour muted-foreground>>; }

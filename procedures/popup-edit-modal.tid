@@ -1,0 +1,58 @@
+title: $:/plugins/rimir/knowledge-app/procedures/popup-edit-modal
+type: text/vnd.tiddlywiki
+
+\import [[$:/core/ui/PageMacros]] [all[shadows+tiddlers]tag[$:/tags/Macro]!is[draft]] [all[shadows+tiddlers]tag[$:/tags/Global]!is[draft]]
+
+<$let
+	target={{{ [[$:/state/rimir/knowledge-app/popup-edit/target]get[text]] }}}
+	draftTitle={{{ [[Draft of ']addsuffix<target>addsuffix[']] }}}
+>
+
+<div class="kn-modal-overlay kn-popup-edit-overlay">
+<div class="kn-popup-edit">
+<div class="kn-popup-edit-header">
+<strong>Edit: <$text text=<<target>>/></strong>
+<span class="kn-popup-edit-actions">
+<$navigator story="$:/state/rimir/knowledge-app/popup-edit/story" history="$:/state/rimir/knowledge-app/popup-edit/history">
+<$button class="rr-link-btn" tooltip="Save and close">
+<$action-sendmessage $message="tm-save-tiddler" $param=<<draftTitle>>/>
+<$action-setfield $tiddler="$:/state/rimir/knowledge-app/popup-edit/target" text=""/>
+Save &amp; Close
+</$button>
+<$button class="tc-btn-invisible" tooltip="Cancel — discard the draft">
+<$action-sendmessage $message="tm-cancel-tiddler" $param=<<draftTitle>>/>
+<$action-setfield $tiddler="$:/state/rimir/knowledge-app/popup-edit/target" text=""/>
+Cancel
+</$button>
+</$navigator>
+</span>
+</div>
+
+<div class="kn-popup-edit-content">
+<$vars
+	tv-config-toolbar-icons={{$:/config/Toolbar/Icons}}
+	tv-config-toolbar-text={{$:/config/Toolbar/Text}}
+	tv-config-toolbar-class={{$:/config/Toolbar/ButtonClass}}
+	tv-enable-drag-and-drop={{$:/config/DragAndDrop/Enable}}
+	tv-show-missing-links={{$:/config/MissingLinks}}
+	storyviewTitle={{$:/view}}
+	languageTitle={{{ [{$:/language}get[name]] }}}
+>
+<$navigator story="$:/state/rimir/knowledge-app/popup-edit/story" history="$:/state/rimir/knowledge-app/popup-edit/history"
+	openLinkFromInsideRiver={{$:/config/Navigation/openLinkFromInsideRiver}}
+	openLinkFromOutsideRiver={{$:/config/Navigation/openLinkFromOutsideRiver}}
+	relinkOnRename={{$:/config/RelinkOnRename}}
+>
+<$list filter="[<draftTitle>is[tiddler]]" variable="_" emptyMessage="<div class='kn-placeholder'>Draft is being prepared…</div>">
+<$tiddler tiddler=<<draftTitle>>>
+<$transclude $tiddler="$:/core/ui/EditTemplate"/>
+</$tiddler>
+</$list>
+</$navigator>
+</$vars>
+</div>
+
+</div>
+</div>
+
+</$let>

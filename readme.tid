@@ -1,0 +1,37 @@
+title: $:/plugins/rimir/knowledge-app/readme
+type: text/vnd.tiddlywiki
+
+! Knowledge App
+
+A zettelkasten-style note app for TiddlyWiki. Notes live under the `knowledge/…` title namespace and link via short refs (`[[Foo]]`) thanks to the `rimir/namespace` plugin.
+
+!! Why
+
+Deep folder hierarchies (`knowledge/topics/programming/typescript/Foo`) are great for organisation but hostile to fluent linking. The namespace plugin already resolves short refs by walking up the source tiddler's path; this app gives those notes a proper home with browse / backlinks / quick-capture / maintenance views.
+
+!! Features
+
+* ''Areas'' — first-class knowledge areas (LLM, IT-Security, Health, Gaming + user-creatable) live as `knowledge/<area>/…`. Topbar pill row switches between them; quick-capture and the `\context` line follow the active area automatically. Cross-area linking works out of the box via namespace walk-up.
+* ''Quick-capture'' — title + body modal in the topbar; new notes land at `knowledge/<area>/inbox/…` (or `knowledge/inbox/…` when no area is active) with the right `\context` pragma pre-set.
+* ''Three-tier status'' — fleeting, developing, evergreen (TZK-style). One click to promote.
+* ''Backlinks panel'' — reads namespace's reverse index (no setup needed).
+* ''Write tab'' — orphans, stubs, dead-ends, broken refs. Maintenance at a glance.
+* ''Search'' — incremental search over title + text.
+* ''Mount `kn`'' — orga / priv / any tiddler can write `[[kn/topics/foo]]` to reach knowledge content.
+* ''Custom pseudo `_index''' — `[[knowledge/topics/foo/_index]]` resolves to that topic's `index` or `README` tiddler. (The pseudo expands inside an absolute ref; bare `[[_index]]` does not auto-find the current topic's index.)
+
+!! Prerequisites
+
+* [[appify|$:/plugins/rimir/appify]] — app platform
+* [[namespace|$:/plugins/rimir/namespace]] — short-ref resolution
+* [[theme|$:/plugins/rimir/theme]] — shared `rr-` styles
+* [[doc-template|$:/plugins/rimir/doc-template]] (soft) — full documentation hub
+
+!! Quick start
+
+# Open the FAB and pick "Knowledge".
+# Click the +Note button in the topbar; type a title and (optionally) some body wikitext.
+# The note opens. Type `[[Foo]]` somewhere to link a (possibly future) note.
+# Open the Write tab to see orphans / stubs / dead-ends / broken refs.
+
+The plugin enables four namespace feature flags on install (walk-up, aliases, pseudo-expansion). Toggle them in the namespace plugin's settings if you ever need to disable them.

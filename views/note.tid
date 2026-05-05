@@ -1,0 +1,121 @@
+tags: $:/tags/rimir/appify/view
+title: $:/plugins/rimir/knowledge-app/views/note
+type: text/vnd.tiddlywiki
+
+\import $:/plugins/rimir/knowledge-app/filters/helpers
+\import $:/plugins/rimir/knowledge-app/procedures/tier-pill
+\import $:/plugins/rimir/knowledge-app/procedures/type-pill
+\import $:/plugins/rimir/knowledge-app/procedures/note-card
+
+<div class="kn-app">
+
+<$let
+	noteTitle={{{ [statewrap-get[note]] }}}
+	activeArea={{{ [statewrap-get[area]] }}}
+	editState={{{ [[$:/state/rimir/knowledge-app/inline-edit/]addsuffix<noteTitle>] }}}
+	deleteState={{{ [[$:/state/rimir/knowledge-app/delete/]addsuffix<noteTitle>] }}}
+	popupTarget="$:/state/rimir/knowledge-app/popup-edit/target"
+>
+
+<$list filter="[<noteTitle>is[blank]]" variable="_">
+<div class="kn-placeholder">
+Pick a note from the sidebar or use ''+ Note'' in the topbar.
+</div>
+</$list>
+
+<$list filter="[<noteTitle>!is[blank]]" variable="_">
+<div class="kn-note-header">
+<$transclude $variable="kn-type-pill" noteTitle=<<noteTitle>> interactive="yes"/>
+<$transclude $variable="kn-tier-pill" noteTitle=<<noteTitle>> interactive="yes"/>
+<div class="kn-note-actions">
+<%if [<editState>get[text]match[yes]] %>
+<$button class="rr-link-btn" tooltip="Finish inline editing (or press Ctrl-Enter)">
+<$action-setfield $tiddler=<<editState>> text=""/>
+✓ Done
+</$button>
+<%else%>
+<$button class="tc-btn-invisible" tooltip="Inline edit body — double-click the body or press this button">
+<$list filter="[<noteTitle>prefix[knowledge/]!tag[$:/tags/rimir/knowledge-app/note]]" variable="_">
+<$let noteArea={{{ [<noteTitle>removeprefix[knowledge/]split[/]first[]] ~[<activeArea>] }}} noteCtx={{{ [<noteArea>!is[blank]then[knowledge/]addsuffix<noteArea>] ~[[knowledge]] }}}>
+<$action-listops $tiddler=<<noteTitle>> $tags="$:/tags/rimir/knowledge-app/note"/>
+<$action-setfield $tiddler=<<noteTitle>> kn.tier="fleeting" kn.type="idea" context=<<noteCtx>>/>
+</$let>
+</$list>
+<$action-setfield $tiddler=<<editState>> text="yes"/>
+✎ Inline
+</$button>
+<$navigator story="$:/state/rimir/knowledge-app/popup-edit/story" history="$:/state/rimir/knowledge-app/popup-edit/history">
+<$button class="tc-btn-invisible" tooltip="Open full editor (title, fields, body)">
+<$action-setfield $tiddler=<<popupTarget>> text=<<noteTitle>>/>
+<$action-sendmessage $message="tm-edit-tiddler" $param=<<noteTitle>>/>
+⛶ Edit
+</$button>
+</$navigator>
+<%if [<deleteState>get[text]match[yes]] %>
+<span class="kn-del-confirm">
+<span style="color:<<colour alert-foreground>>;font-size:0.9em;">Delete?</span>
+<$button class="kn-del-yes" tooltip="Confirm delete">
+<$action-deletetiddler $tiddler=<<noteTitle>>/>
+<$action-deletetiddler $tiddler=<<deleteState>>/>
+<$action-statewrap-set channel="note" value=""/>
+<$action-statewrap-set channel="section" value="browse"/>
+Yes
+</$button>
+<$button class="kn-del-no tc-btn-invisible" tooltip="Cancel">
+<$action-setfield $tiddler=<<deleteState>> text=""/>
+No
+</$button>
+</span>
+<%else%>
+<$button class="tc-btn-invisible kn-del-trigger" tooltip="Delete this note">
+<$action-setfield $tiddler=<<deleteState>> text="yes"/>
+🗑
+</$button>
+<%endif%>
+<%endif%>
+</div>
+</div>
+
+<div class="kn-note-meta" style="margin-bottom:8px;color:<<colour muted-foreground>>;font-size:0.85em;">
+<code><$text text=<<noteTitle>>/></code> · modified <$text text={{{ [<noteTitle>get[modified]format:date[YYYY-0MM-0DD]] }}}/>
+</div>
+
+<%if [<editState>get[text]match[yes]] %>
+<$let editTiddler=<<noteTitle>> wrapClass="kn-inline-edit-wrap" editAutoFocus="yes">
+<$transclude $tiddler="$:/plugins/rimir/theme/rr-text-editor"/>
+</$let>
+<%else%>
+<$linkcatcher actions="""<$let resolved={{{ [<navigateTo>is[tiddler]then<navigateTo>] ~[<navigateTo>prefix[knowledge/]then<navigateTo>] ~[<navigateTo>prefix[$:/]then<navigateTo>] ~[<activeArea>is[blank]then<navigateTo>] ~[<activeArea>addprefix[knowledge/]addsuffix[/]addsuffix<navigateTo>] }}} shortLabel={{{ [<activeArea>is[blank]then<navigateTo>] ~[<navigateTo>removeprefix[knowledge/]removeprefix<activeArea>removeprefix[/]] ~[<navigateTo>] }}} noteArea={{{ [<resolved>removeprefix[knowledge/]split[/]first[]] ~[<activeArea>] }}} noteCtx={{{ [<noteArea>!is[blank]then[knowledge/]addsuffix<noteArea>] ~[[knowledge]] }}}><$list filter="[<resolved>prefix[knowledge/]!is[tiddler]]" variable="_"><$action-createtiddler $basetitle=<<resolved>> tags="$:/tags/rimir/knowledge-app/note" kn.tier="fleeting" kn.type="idea" context=<<noteCtx>>/></$list><$action-statewrap-navigate label=<<shortLabel>> section="note" note=<<resolved>>/></$let>""">
+<div class="kn-note-body">
+<$let viewTiddler=<<noteTitle>> noteContext={{{ [<noteTitle>get[context]] }}}>
+<$context prefix=<<noteContext>>>
+<$transclude $tiddler="$:/plugins/rimir/theme/rr-text-view-editable" $mode="block"/>
+</$context>
+</$let>
+</div>
+</$linkcatcher>
+<%endif%>
+
+<div class="kn-backlinks">
+<div class="kn-backlinks-title">↩ Backlinks (<$count filter="[<noteTitle>ns-backlinks[]]"/>)</div>
+<$list filter="[<noteTitle>ns-backlinks[]]" variable="b" emptyMessage="<div class='kn-backlinks-empty'>No backlinks yet.</div>">
+<$transclude $variable="kn-note-card" noteTitle=<<b>> $mode="block"/>
+</$list>
+</div>
+
+<div class="kn-backlinks">
+<div class="kn-backlinks-title">→ Outgoing (<$count filter="[<noteTitle>ns-forwardlinks[]]"/>)</div>
+<$list filter="[<noteTitle>ns-forwardlinks[]]" variable="f" emptyMessage="<div class='kn-backlinks-empty'>No outgoing links.</div>">
+<$transclude $variable="kn-note-card" noteTitle=<<f>> $mode="block"/>
+</$list>
+</div>
+
+</$list>
+
+</$let>
+
+<$reveal state="$:/state/rimir/knowledge-app/popup-edit/target" type="nomatch" text="">
+<$transclude $tiddler="$:/plugins/rimir/knowledge-app/procedures/popup-edit-modal" $mode="block"/>
+</$reveal>
+
+</div>

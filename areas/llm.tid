@@ -1,0 +1,7 @@
+tags: $:/tags/rimir/knowledge-app/area
+title: $:/plugins/rimir/knowledge-app/areas/llm
+area-id: llm
+caption: LLM
+icon: 🤖
+color: #6b4cff
+description: Large language models, prompt engineering, agent architectures

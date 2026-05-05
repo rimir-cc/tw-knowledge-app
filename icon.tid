@@ -1,0 +1,4 @@
+title: $:/plugins/rimir/knowledge-app/icon
+type: image/svg+xml
+
+<svg width="22pt" height="22pt" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#6b4cff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.5.4.8.9.9 1.5l.1 1.8h6l.1-1.8c.1-.6.4-1.1.9-1.5A7 7 0 0 0 12 2z"/></svg>

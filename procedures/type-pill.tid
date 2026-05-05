@@ -1,0 +1,42 @@
+title: $:/plugins/rimir/knowledge-app/procedures/type-pill
+type: text/vnd.tiddlywiki
+
+\procedure kn-type-pill(noteTitle interactive)
+<$let
+	type={{{ [<noteTitle>get[kn.type]] ~[[idea]] }}}
+	typeIdx={{{ [{$:/config/rimir/knowledge-app/types}jsonindexes[]] :filter[{$:/config/rimir/knowledge-app/types}jsonget<currentTiddler>,[id]match<type>] +[first[]] }}}
+	caption={{{ [{$:/config/rimir/knowledge-app/types}jsonget<typeIdx>,[caption]] ~[<type>] }}}
+	icon={{{ [{$:/config/rimir/knowledge-app/types}jsonget<typeIdx>,[icon]] ~[[🏷]] }}}
+	popupState={{{ [[$:/state/rimir/knowledge-app/type-popup/]addsuffix<noteTitle>] }}}
+	cls={{{ [[kn-type-pill kn-type-]addsuffix<type>] }}}
+>
+<$list filter="[<interactive>match[yes]]" variable="_">
+<$button class=<<cls>> popup=<<popupState>> tooltip="Pick a card type"><<icon>> <<caption>></$button>
+<$reveal state=<<popupState>> type="popup" position="below" animate="yes">
+<div class="kn-type-popup">
+<$list filter="[[core]] [[entity]] [[structural]]" variable="grp">
+<div class="kn-type-popup-group">
+<div class="kn-type-popup-group-header"><<grp>></div>
+<$list filter="[{$:/config/rimir/knowledge-app/types}jsonindexes[]] :filter[{$:/config/rimir/knowledge-app/types}jsonget<currentTiddler>,[group]match<grp>]" variable="idx">
+<$let
+	itemId={{{ [{$:/config/rimir/knowledge-app/types}jsonget<idx>,[id]] }}}
+	itemCaption={{{ [{$:/config/rimir/knowledge-app/types}jsonget<idx>,[caption]] }}}
+	itemIcon={{{ [{$:/config/rimir/knowledge-app/types}jsonget<idx>,[icon]] }}}
+>
+<$button class={{{ [<type>match<itemId>then[kn-type-popup-item kn-type-popup-active]else[kn-type-popup-item]] }}}>
+<$action-setfield $tiddler=<<noteTitle>> kn.type=<<itemId>>/>
+<$action-setfield $tiddler=<<popupState>> text=""/>
+<<itemIcon>> <<itemCaption>>
+</$button>
+</$let>
+</$list>
+</div>
+</$list>
+</div>
+</$reveal>
+</$list>
+<$list filter="[<interactive>!match[yes]]" variable="_">
+<span class=<<cls>>><<icon>> <<caption>></span>
+</$list>
+</$let>
+\end

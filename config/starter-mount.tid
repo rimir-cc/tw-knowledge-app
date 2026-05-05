@@ -1,0 +1,6 @@
+tags: $:/tags/NamespaceMount
+title: $:/plugins/rimir/knowledge-app/config/mount-kn
+from: kn
+to: knowledge
+
+Mount: lets any tiddler write `[[kn/topics/foo]]` and have it resolve to `knowledge/topics/foo`. Convenient short prefix for cross-app refs into the knowledge namespace.

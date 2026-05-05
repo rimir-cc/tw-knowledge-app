@@ -1,0 +1,42 @@
+rdt.plugin-key: knowledge-app
+rdt.plugin-name: knowledge app
+rdt.section: Architecture
+rdt.order: 2
+title: $:/plugins/rimir/knowledge-app/doc/architecture
+type: text/vnd.tiddlywiki
+
+<$transclude $tiddler="$:/plugins/rimir/doc-template/templates/page">
+<$fill $name="body">
+
+!! Layers
+
+# ''Storage'' — plain TW tiddlers under `knowledge/…`, tagged `$:/tags/rimir/knowledge-app/note`, with `kn.tier` field.
+# ''Resolution'' — namespace plugin handles `[[Foo]]` resolution via its 9-stage pipeline (literal → alias → mount → pseudo → walk-up → unresolved). The app enables walk-up + aliases + pseudo-expansion on install.
+# ''App shell'' — appify framework. App declared at `$:/plugins/rimir/knowledge-app/apps/knowledge` with channels `section topic note` and a `topbar-sidebar-main` layout.
+# ''Views'' — five sections: Home, Browse, Note, Write, Search. Switched via `section` channel; clicking a topic in the sidebar navigates with `topic` set.
+
+!! Channels
+
+| Channel | Set by | Read by |
+|`section`| Topbar buttons, breadcrumb, `$action-statewrap-navigate` | Splits config (decides which view to render) |
+|`topic` | Sidebar topic-tree buttons | Browse view (filters by topic prefix) |
+|`note` | Note-card buttons, search results, capture | Note view (chooses which note to render) |
+
+!! Filter helpers
+
+`filters/helpers.tid` exposes:
+
+* `\function knowledge.notes()` — all notes via the system tag
+* `\function knowledge.orphans()` — notes with zero `ns-backlinks`
+* `\function knowledge.dead-ends()` — notes with zero `ns-forwardlinks`
+* `\function knowledge.stubs()` — notes whose body is shorter than the configured threshold
+* `\function knowledge.broken()` — notes whose body contains an unresolved `[[ref]]`
+
+The broken-ref detector is a JS filter operator (`knowledge-has-broken-ref`) that scans the body and asks the resolver about each `[[…]]` match.
+
+!! Custom pseudo
+
+`pseudo/_index.js` (module-type `rimir-ns-pseudo`) — `_index` segment resolves to `index` or `README` if either exists under the preceding prefix. Use inside an absolute ref like `[[knowledge/topics/foo/_index]]`.
+
+</$fill>
+</$transclude>

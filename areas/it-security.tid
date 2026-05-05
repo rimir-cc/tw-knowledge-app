@@ -1,0 +1,7 @@
+tags: $:/tags/rimir/knowledge-app/area
+title: $:/plugins/rimir/knowledge-app/areas/it-security
+area-id: it-security
+caption: IT Security
+icon: 🛡️
+color: #d9534f
+description: Application security, threat modelling, OWASP, ASVS

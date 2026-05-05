@@ -1,0 +1,129 @@
+tags: $:/tags/rimir/appify/view
+title: $:/plugins/rimir/knowledge-app/apps/knowledge-topbar
+type: text/vnd.tiddlywiki
+
+\import $:/plugins/rimir/knowledge-app/filters/helpers
+
+\procedure kn-area-pill(areaId activeArea navHistory)
+<$let
+	areaTiddler={{{ [all[shadows+tiddlers]tag[$:/tags/rimir/knowledge-app/area]] :filter[get[area-id]match<areaId>] +[first[]] }}}
+	caption={{{ [<areaTiddler>get[caption]] ~[<areaId>] }}}
+	icon={{{ [<areaTiddler>get[icon]] ~[[📂]] }}}
+	color={{{ [<areaTiddler>get[color]] }}}
+	cls={{{ [<activeArea>match<areaId>then[kn-topbar-btn kn-area-pill kn-topbar-active]] ~[[kn-topbar-btn kn-area-pill]] }}}
+	style={{{ [<color>!is[blank]then[border-color:]addsuffix<color>] ~[[]] }}}
+>
+<$button class=<<cls>> style=<<style>> tooltip={{{ [<caption>addprefix[Switch to ]] }}}>
+<$action-setfield $tiddler=<<navHistory>> text="[]"/>
+<$action-statewrap-set channel="area" value=<<areaId>>/>
+<<icon>> <<caption>>
+</$button>
+</$let>
+\end
+
+<div class="kn-app">
+<$let
+	activeSection={{{ [statewrap-get[section]] ~[[home]] }}}
+	activeArea={{{ [statewrap-get[area]] }}}
+	navHistory="$:/state/rimir/statewrap/$:/plugins/rimir/knowledge-app/apps/knowledge/_nav-history"
+>
+
+<div class="kn-topbar">
+
+<!-- Row 1: section pills + actions -->
+<div class="kn-topbar-row">
+
+<$button class={{{ [<activeSection>match[home]then[kn-topbar-btn kn-topbar-active]else[kn-topbar-btn]] }}}>
+<$action-setfield $tiddler=<<navHistory>> text="[]"/>
+<$action-statewrap-set channel="section" value="home"/>
+🏠 Home
+</$button>
+
+<$button class={{{ [<activeSection>match[browse]then[kn-topbar-btn kn-topbar-active]else[kn-topbar-btn]] }}}>
+<$action-setfield $tiddler=<<navHistory>> text="[]"/>
+<$action-statewrap-set channel="section" value="browse"/>
+📚 Browse
+</$button>
+
+<$list filter="[statewrap-get[note]!is[blank]]" variable="_">
+<$button class={{{ [<activeSection>match[note]then[kn-topbar-btn kn-topbar-active]else[kn-topbar-btn]] }}}>
+<$action-statewrap-set channel="section" value="note"/>
+📝 Note
+</$button>
+</$list>
+
+<$button class={{{ [<activeSection>match[write]then[kn-topbar-btn kn-topbar-active]else[kn-topbar-btn]] }}}>
+<$action-setfield $tiddler=<<navHistory>> text="[]"/>
+<$action-statewrap-set channel="section" value="write"/>
+🛠 Write
+</$button>
+
+<$button class={{{ [<activeSection>match[search]then[kn-topbar-btn kn-topbar-active]else[kn-topbar-btn]] }}}>
+<$action-setfield $tiddler=<<navHistory>> text="[]"/>
+<$action-statewrap-set channel="section" value="search"/>
+🔍 Search
+</$button>
+
+<$button class="kn-topbar-btn" tooltip="Quick capture (new note)">
+<$action-setfield $tiddler="$:/state/rimir/knowledge-app/capture/open" text="yes"/>
+<$action-setfield $tiddler="$:/state/rimir/knowledge-app/capture/title" text=""/>
+<$action-setfield $tiddler="$:/state/rimir/knowledge-app/capture/body" text=""/>
++ Note
+</$button>
+
+<div class="kn-topbar-spacer"/>
+
+<div class="kn-topbar-search">
+<$let qTid="$:/state/rimir/knowledge-app/search-query">
+<$edit-text tiddler=<<qTid>> tag="input" placeholder="Search knowledge…" class="tc-edit-texteditor"/>
+</$let>
+</div>
+
+</div>
+
+<!-- Row 2: area pills -->
+<div class="kn-topbar-row kn-topbar-areas">
+
+<$button class={{{ [<activeArea>is[blank]then[kn-topbar-btn kn-area-pill kn-topbar-active]else[kn-topbar-btn kn-area-pill]] }}} tooltip="All areas">
+<$action-setfield $tiddler=<<navHistory>> text="[]"/>
+<$action-statewrap-set channel="area" value=""/>
+🌐 All
+</$button>
+
+<$list filter="[all[shadows+tiddlers]prefix[knowledge/]] :map[removeprefix[knowledge/]split[/]first[]] [all[shadows+tiddlers]tag[$:/tags/rimir/knowledge-app/area]get[area-id]] +[unique[]nsort[]]" variable="areaId">
+<$transclude $variable="kn-area-pill" areaId=<<areaId>> activeArea=<<activeArea>> navHistory=<<navHistory>>/>
+</$list>
+
+<$button class="kn-topbar-btn kn-area-pill kn-area-add" tooltip="Create a new area">
+<$action-setfield $tiddler="$:/state/rimir/knowledge-app/area-modal/open" text="yes"/>
+<$action-setfield $tiddler="$:/state/rimir/knowledge-app/area-modal/id" text=""/>
+<$action-setfield $tiddler="$:/state/rimir/knowledge-app/area-modal/caption" text=""/>
+<$action-setfield $tiddler="$:/state/rimir/knowledge-app/area-modal/icon" text=""/>
++ Area
+</$button>
+
+</div>
+
+<!-- Back button + breadcrumb -->
+<div class="kn-topbar-row kn-nav-row">
+<$list filter="[<navHistory>get[text]jsonindexes[]] +[first[]]" variable="_check">
+<$button class="kn-back-btn tc-btn-invisible" tooltip="Back">
+<$action-statewrap-back/>
+← Back
+</$button>
+</$list>
+<$transclude $tiddler="$:/plugins/rimir/appify/ui/nav-breadcrumb" historyTiddler=<<navHistory>> maxEntries={{$:/config/rimir/knowledge-app/breadcrumb-max-entries}}/>
+</div>
+
+</div>
+
+<$reveal state="$:/state/rimir/knowledge-app/capture/open" type="match" text="yes">
+<$transclude $tiddler="$:/plugins/rimir/knowledge-app/procedures/quick-capture-modal" $mode="block"/>
+</$reveal>
+
+<$reveal state="$:/state/rimir/knowledge-app/area-modal/open" type="match" text="yes">
+<$transclude $tiddler="$:/plugins/rimir/knowledge-app/procedures/area-modal" $mode="block"/>
+</$reveal>
+
+</$let>
+</div>

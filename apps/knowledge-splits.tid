@@ -1,0 +1,34 @@
+title: $:/config/rimir/appify/splits/$:/plugins/rimir/knowledge-app/apps/knowledge
+type: application/json
+
+{
+  "main": {
+    "views": [
+      {
+        "view": "$:/plugins/rimir/knowledge-app/views/home",
+        "label": "Home",
+        "condition": "[statewrap-get[section]match[home]]"
+      },
+      {
+        "view": "$:/plugins/rimir/knowledge-app/views/browse",
+        "label": "Browse",
+        "condition": "[statewrap-get[section]match[browse]]"
+      },
+      {
+        "view": "$:/plugins/rimir/knowledge-app/views/note",
+        "label": "Note",
+        "condition": "[statewrap-get[section]match[note]]"
+      },
+      {
+        "view": "$:/plugins/rimir/knowledge-app/views/write",
+        "label": "Write",
+        "condition": "[statewrap-get[section]match[write]]"
+      },
+      {
+        "view": "$:/plugins/rimir/knowledge-app/views/search",
+        "label": "Search",
+        "condition": "[statewrap-get[section]match[search]]"
+      }
+    ]
+  }
+}

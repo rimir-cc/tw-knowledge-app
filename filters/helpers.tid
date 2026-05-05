@@ -1,0 +1,25 @@
+title: $:/plugins/rimir/knowledge-app/filters/helpers
+type: text/vnd.tiddlywiki
+
+\function knowledge.notes() [all[shadows+tiddlers]prefix[knowledge/]]
+\function knowledge.orphans() [function[knowledge.notes]] :filter[<currentTiddler>ns-backlinks[]count[]match[0]]
+\function knowledge.dead-ends() [function[knowledge.notes]] :filter[<currentTiddler>ns-forwardlinks[]count[]match[0]]
+\function knowledge.stubs() [function[knowledge.notes]] :filter[<currentTiddler>get[text]length[]compare:integer:lt{$:/config/rimir/knowledge-app/stub-threshold}]
+\function knowledge.broken() [function[knowledge.notes]knowledge-has-broken-ref[]]
+
+\function knowledge.areas-registered() [all[shadows+tiddlers]tag[$:/tags/rimir/knowledge-app/area]get[area-id]]
+\function knowledge.areas-derived() [function[knowledge.notes]] :map[removeprefix[knowledge/]split[/]first[]]
+\function knowledge.areas() [function[knowledge.areas-registered]] [function[knowledge.areas-derived]] +[unique[]nsort[]]
+\function knowledge.area-tiddler(id) [all[shadows+tiddlers]tag[$:/tags/rimir/knowledge-app/area]] :filter[get[area-id]match<id>] +[first[]]
+\function knowledge.area-caption(id) [function[knowledge.area-tiddler],<id>] :map[<currentTiddler>get[caption]] ~[<id>]
+\function knowledge.area-icon(id) [function[knowledge.area-tiddler],<id>] :map[<currentTiddler>get[icon]] ~[[📂]]
+\function knowledge.area-color(id) [function[knowledge.area-tiddler],<id>] :map[<currentTiddler>get[color]] ~[[]]
+
+\function knowledge.short-label(title, area) [<area>is[blank]then<title>] ~[<title>removeprefix[knowledge/]removeprefix<area>removeprefix[/]] ~[<title>]
+\function knowledge.area-resolve(target, area) [<target>is[tiddler]then<target>] ~[<target>prefix[knowledge/]then<target>] ~[<target>prefix[$:/]then<target>] ~[<area>is[blank]then<target>] ~[<area>addprefix[knowledge/]addsuffix[/]addsuffix<target>]
+
+\function knowledge.types() [{$:/config/rimir/knowledge-app/types}jsonindexes[]] :map[{$:/config/rimir/knowledge-app/types}jsonget<currentTiddler>,[id]]
+\function knowledge.type-idx(id) [{$:/config/rimir/knowledge-app/types}jsonindexes[]] :filter[{$:/config/rimir/knowledge-app/types}jsonget<currentTiddler>,[id]match<id>] +[first[]]
+\function knowledge.type-caption(id) [{$:/config/rimir/knowledge-app/types}jsonindexes[]] :filter[{$:/config/rimir/knowledge-app/types}jsonget<currentTiddler>,[id]match<id>] +[first[]] :map[{$:/config/rimir/knowledge-app/types}jsonget<currentTiddler>,[caption]] ~[<id>]
+\function knowledge.type-icon(id) [{$:/config/rimir/knowledge-app/types}jsonindexes[]] :filter[{$:/config/rimir/knowledge-app/types}jsonget<currentTiddler>,[id]match<id>] +[first[]] :map[{$:/config/rimir/knowledge-app/types}jsonget<currentTiddler>,[icon]] ~[[🏷]]
+\function knowledge.type-group(id) [{$:/config/rimir/knowledge-app/types}jsonindexes[]] :filter[{$:/config/rimir/knowledge-app/types}jsonget<currentTiddler>,[id]match<id>] +[first[]] :map[{$:/config/rimir/knowledge-app/types}jsonget<currentTiddler>,[group]] ~[[]]

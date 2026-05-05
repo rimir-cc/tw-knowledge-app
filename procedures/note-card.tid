@@ -1,0 +1,19 @@
+title: $:/plugins/rimir/knowledge-app/procedures/note-card
+type: text/vnd.tiddlywiki
+
+\procedure kn-note-card(noteTitle)
+<$let
+	tier={{{ [<noteTitle>get[kn.tier]] ~[[fleeting]] }}}
+	caption={{{ [<noteTitle>get[caption]] ~[<noteTitle>] }}}
+	activeArea={{{ [statewrap-get[area]] }}}
+	shortLabel={{{ [<activeArea>is[blank]then<noteTitle>] ~[<noteTitle>removeprefix[knowledge/]removeprefix<activeArea>removeprefix[/]] ~[<noteTitle>] }}}
+	navLabel={{{ [<noteTitle>get[caption]!is[blank]] ~[<shortLabel>] }}}
+>
+<$button class="kn-note-card tc-btn-invisible">
+<$action-statewrap-navigate label=<<navLabel>> section="note" note=<<noteTitle>>/>
+<span class="kn-note-card-title"><<caption>></span>
+<span class={{{ [[kn-tier-pill kn-tier-]addsuffix<tier>] }}}><<tier>></span>
+<span class="kn-note-card-meta"><$text text={{{ [<noteTitle>get[modified]format:date[YYYY-0MM-0DD]] }}}/></span>
+</$button>
+</$let>
+\end

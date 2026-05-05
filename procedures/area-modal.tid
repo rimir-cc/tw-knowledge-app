@@ -1,0 +1,58 @@
+title: $:/plugins/rimir/knowledge-app/procedures/area-modal
+type: text/vnd.tiddlywiki
+
+<div class="kn-modal-overlay">
+<div class="kn-modal">
+<div class="kn-modal-header">
+<strong>+ New knowledge area</strong>
+<$button class="tc-btn-invisible" tooltip="Cancel">
+<$action-setfield $tiddler="$:/state/rimir/knowledge-app/area-modal/open" text=""/>
+✕
+</$button>
+</div>
+<div class="kn-modal-body">
+
+<$let
+	idState="$:/state/rimir/knowledge-app/area-modal/id"
+	captionState="$:/state/rimir/knowledge-app/area-modal/caption"
+	iconState="$:/state/rimir/knowledge-app/area-modal/icon"
+>
+
+<label style="font-size:0.85em;color:<<colour muted-foreground>>;">Area ID (lowercase, hyphens only — used in tiddler titles)</label>
+<$edit-text tiddler=<<idState>> tag="input" placeholder="e.g. machine-learning" focus="true" class="tc-edit-texteditor"/>
+
+<label style="font-size:0.85em;color:<<colour muted-foreground>>;">Display caption</label>
+<$edit-text tiddler=<<captionState>> tag="input" placeholder="e.g. Machine Learning" class="tc-edit-texteditor"/>
+
+<label style="font-size:0.85em;color:<<colour muted-foreground>>;">Icon (single emoji)</label>
+<$edit-text tiddler=<<iconState>> tag="input" placeholder="e.g. 🧠" class="tc-edit-texteditor" style="max-width:80px;"/>
+
+<div class="kn-modal-actions">
+<$button class="tc-btn-invisible">
+<$action-setfield $tiddler="$:/state/rimir/knowledge-app/area-modal/open" text=""/>
+Cancel
+</$button>
+
+<$let
+	rawId={{{ [<idState>get[text]] }}}
+	rawCaption={{{ [<captionState>get[text]] }}}
+	rawIcon={{{ [<iconState>get[text]] }}}
+	finalCaption={{{ [<rawCaption>!is[blank]then<rawCaption>] ~[<rawId>] }}}
+	finalIcon={{{ [<rawIcon>!is[blank]then<rawIcon>] ~[[📂]] }}}
+	areaTiddler={{{ [<rawId>addprefix[$:/config/rimir/knowledge-app/areas/]] }}}
+>
+<$button class="rr-link-btn" disabled={{{ [<rawId>!is[blank]then[]] ~[[true]] }}}>
+<$action-createtiddler $basetitle=<<areaTiddler>> tags="$:/tags/rimir/knowledge-app/area" area-id=<<rawId>> caption=<<finalCaption>> icon=<<finalIcon>>/>
+<$action-setfield $tiddler="$:/state/rimir/knowledge-app/area-modal/open" text=""/>
+<$action-statewrap-navigate label=<<finalCaption>> section="browse" area=<<rawId>>/>
+Create
+</$button>
+</$let>
+
+</div>
+
+</$let>
+
+</div>
+</div>
+</div>

@@ -1,0 +1,36 @@
+title: $:/plugins/rimir/knowledge-app/settings
+type: text/vnd.tiddlywiki
+
+! Settings
+
+!! Stub threshold
+
+A note whose body length is below this threshold is shown in the ''Write → Stubs'' column.
+
+Current value: <$edit-text tiddler="$:/config/rimir/knowledge-app/stub-threshold" default="200" tag="input" size="6"/> characters
+
+!! Capture inbox prefix
+
+New notes from the topbar's quick-capture get this prefix unless the typed title already starts with `knowledge/`.
+
+Current value: <$edit-text tiddler="$:/config/rimir/knowledge-app/capture-prefix" default="knowledge/inbox/" tag="input" size="30"/>
+
+!! Namespace feature flags
+
+The app enables these on install. Toggle them via the [[namespace plugin|$:/plugins/rimir/namespace]] settings tab if needed.
+
+* `$:/config/rimir/namespace/walk-up` — short refs walk up the source tiddler's path
+* `$:/config/rimir/namespace/aliases` — exact + pattern aliases for short refs
+* `$:/config/rimir/namespace/pseudo-expansion` — pluggable pseudo segments (`_latest`, `_index`)
+
+!! Registered mounts (read-only)
+
+<$list filter="[all[shadows+tiddlers]tag[$:/tags/NamespaceMount]]" variable="m">
+* <<m>> — `<$text text={{{ [<m>get[from]] }}}/>` → `<$text text={{{ [<m>get[to]] }}}/>`
+</$list>
+
+!! Registered aliases (read-only)
+
+<$list filter="[all[shadows+tiddlers]tag[$:/tags/NamespaceAlias]]" variable="a" emptyMessage="(none registered)">
+* <<a>> — `<$text text={{{ [<a>get[short]] }}}/>` → `<$text text={{{ [<a>get[expands-to]] }}}/>`
+</$list>

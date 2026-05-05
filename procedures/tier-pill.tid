@@ -1,0 +1,20 @@
+title: $:/plugins/rimir/knowledge-app/procedures/tier-pill
+type: text/vnd.tiddlywiki
+
+\procedure kn-tier-pill(noteTitle interactive)
+<$let
+	tier={{{ [<noteTitle>get[kn.tier]] ~[[fleeting]] }}}
+	nextTier={{{ [<tier>match[fleeting]then[developing]] ~[<tier>match[developing]then[evergreen]] ~[<tier>match[evergreen]then[fleeting]] ~[[fleeting]] }}}
+	cls={{{ [[kn-tier-pill kn-tier-]addsuffix<tier>] }}}
+>
+<$list filter="[<interactive>match[yes]]" variable="_">
+<$button class=<<cls>> tooltip={{{ [[Promote to ]addsuffix<nextTier>] }}}>
+<$action-setfield $tiddler=<<noteTitle>> kn.tier=<<nextTier>>/>
+<<tier>>
+</$button>
+</$list>
+<$list filter="[<interactive>!match[yes]]" variable="_">
+<span class=<<cls>>><<tier>></span>
+</$list>
+</$let>
+\end

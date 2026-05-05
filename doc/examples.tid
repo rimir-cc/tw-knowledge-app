@@ -1,0 +1,53 @@
+rdt.plugin-key: knowledge-app
+rdt.plugin-name: knowledge app
+rdt.section: Examples
+rdt.order: 3
+title: $:/plugins/rimir/knowledge-app/doc/examples
+type: text/vnd.tiddlywiki
+
+<$transclude $tiddler="$:/plugins/rimir/doc-template/templates/page">
+<$fill $name="body">
+
+!! Capturing a fleeting note
+
+Click ''+ Note'' in the topbar. Type ''typescript-tips'' and submit. A new tiddler appears at `knowledge/inbox/typescript-tips` with body:
+
+```
+\context knowledge
+
+```
+
+…and `kn.tier=fleeting`.
+
+!! Linking by short ref
+
+In a note titled `knowledge/topics/programming/typescript/Foo`, write:
+
+```
+\context knowledge
+
+See also [[Bar]] for details, or [[topics/python/Snake]] for the cousin language.
+```
+
+The namespace walk-up resolves `[[Bar]]` against the source's path: tries `knowledge/topics/programming/typescript/Bar`, then `knowledge/topics/programming/Bar`, then `knowledge/topics/Bar`, etc. The absolute path `topics/python/Snake` is not absolute (no leading `/`) — it walks up too: `knowledge/topics/programming/typescript/topics/python/Snake` (no), then `…/programming/topics/python/Snake` (no), then `…/topics/topics/python/Snake` (no), then `…/topics/python/Snake` (yes, if it exists).
+
+!! Cross-app linking
+
+In an orga app meeting note (e.g. `orga/meetings/2026-04-30/notes`), write:
+
+```
+Discussion ref: [[kn/topics/programming/typescript/Foo]]
+```
+
+The starter mount `kn → knowledge` rewrites the prefix, and the link resolves to `knowledge/topics/programming/typescript/Foo`.
+
+!! Topic index page
+
+Create a tiddler `knowledge/topics/typescript/index` summarising the topic. From any note in that tree (or anywhere with the right context), write `[[knowledge/topics/typescript/_index]]` — the `_index` pseudo expands to `index` (or `README`) at that prefix.
+
+!! Promote a note
+
+In Note view, click the tier pill. It cycles `fleeting → developing → evergreen → fleeting`. Tier counts on Home and the sidebar update immediately.
+
+</$fill>
+</$transclude>

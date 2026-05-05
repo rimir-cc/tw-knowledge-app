@@ -1,0 +1,23 @@
+tags: $:/tags/rimir/appify/app
+caption: Knowledge
+appify-layout: topbar-sidebar-main
+appify-channels: section area topic note
+appify-default-section: home
+appify-view-topbar: $:/plugins/rimir/knowledge-app/apps/knowledge-topbar
+appify-view-sidebar: $:/plugins/rimir/knowledge-app/apps/knowledge-sidebar
+title: $:/plugins/rimir/knowledge-app/apps/knowledge
+type: text/vnd.tiddlywiki
+
+<$statewrap-rule when="section">
+<$action-statewrap-set channel="topic" value=""/>
+<$action-statewrap-set channel="note" value=""/>
+</$statewrap-rule>
+
+<$statewrap-rule when="area">
+<$action-statewrap-set channel="topic" value=""/>
+<$action-statewrap-set channel="note" value=""/>
+</$statewrap-rule>
+
+<$statewrap-rule when="topic">
+<$action-statewrap-set channel="note" value=""/>
+</$statewrap-rule>

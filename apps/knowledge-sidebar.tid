@@ -1,0 +1,133 @@
+tags: $:/tags/rimir/appify/view
+title: $:/plugins/rimir/knowledge-app/apps/knowledge-sidebar
+type: text/vnd.tiddlywiki
+
+\import $:/plugins/rimir/knowledge-app/procedures/notes-tree
+
+<div class="kn-app kn-side">
+
+<$let
+	activeArea={{{ [statewrap-get[area]] }}}
+	activeNote={{{ [statewrap-get[note]] }}}
+	areaPrefix={{{ [<activeArea>!is[blank]then[knowledge/]addsuffix<activeArea>addsuffix[/]] ~[[knowledge/]] }}}
+	navHistory="$:/state/rimir/statewrap/$:/plugins/rimir/knowledge-app/apps/knowledge/_nav-history"
+>
+
+<%if [<activeArea>is[blank]] %>
+
+<div class="kn-side-section">Areas</div>
+<$list filter="[all[shadows+tiddlers]prefix[knowledge/]] :map[removeprefix[knowledge/]split[/]first[]] [all[shadows+tiddlers]tag[$:/tags/rimir/knowledge-app/area]get[area-id]] +[unique[]nsort[]]" variable="areaId" emptyMessage="<div class='kn-placeholder' style='padding:8px;'>No areas yet. Create one with ''+ Area'' in the topbar.</div>">
+<$let
+	areaTiddler={{{ [all[shadows+tiddlers]tag[$:/tags/rimir/knowledge-app/area]] :filter[get[area-id]match<areaId>] +[first[]] }}}
+	caption={{{ [<areaTiddler>get[caption]] ~[<areaId>] }}}
+	icon={{{ [<areaTiddler>get[icon]] ~[[📂]] }}}
+	areaCountPrefix={{{ [[knowledge/]addsuffix<areaId>addsuffix[/]] }}}
+	count={{{ [all[shadows+tiddlers]prefix<areaCountPrefix>count[]] }}}
+>
+<$button class="kn-nav-item">
+<$action-setfield $tiddler=<<navHistory>> text="[]"/>
+<$action-statewrap-set channel="section" value="browse"/>
+<$action-statewrap-set channel="area" value=<<areaId>>/>
+<<icon>> <<caption>>
+<span style="float:right;color:<<colour muted-foreground>>;font-size:0.8em;"><<count>></span>
+</$button>
+</$let>
+</$list>
+
+<%else%>
+
+<$let activeAreaTiddler={{{ [all[shadows+tiddlers]tag[$:/tags/rimir/knowledge-app/area]] :filter[get[area-id]match<activeArea>] +[first[]] }}}>
+<div class="kn-side-section">
+<$text text={{{ [<activeAreaTiddler>get[icon]] ~[[📂]] }}}/>
+<$text text={{{ [<activeAreaTiddler>get[caption]] ~[<activeArea>] }}}/>
+</div>
+</$let>
+<div style="font-size:0.8em;color:<<colour muted-foreground>>;margin-bottom:8px;">
+<$count filter="[all[shadows+tiddlers]prefix<areaPrefix>]"/> notes
+</div>
+
+<$let
+	notesCollapsedState="$:/state/rimir/knowledge-app/sidebar/notes-collapsed"
+	notesCollapsed={{{ [<notesCollapsedState>get[text]match[yes]] }}}
+	notesCount={{{ [all[shadows+tiddlers]prefix<areaPrefix>count[]] }}}
+>
+<$button class="kn-side-section kn-collapsible-header tc-btn-invisible">
+<$action-setfield $tiddler=<<notesCollapsedState>> text={{{ [<notesCollapsed>match[yes]then[]] ~[[yes]] }}}/>
+<span class="kn-collapse-chevron"><$text text={{{ [<notesCollapsed>match[yes]then[▸]] ~[[▾]] }}}/></span>
+Notes <span style="font-weight:normal;font-size:0.8em;color:<<colour muted-foreground>>;">(<<notesCount>>)</span>
+</$button>
+<%if [<notesCollapsed>!match[yes]] %>
+<$let
+	notesTreeDelimiter={{{ [{$:/config/rimir/knowledge-app/notes-tree-delimiter}trim[]!is[blank]] ~[[/]] }}}
+>
+<$list filter="[all[shadows+tiddlers]prefix<areaPrefix>first[]]" variable="_check" emptyMessage="<div class='kn-placeholder' style='padding:8px;font-size:0.85em;'>No notes in this area yet.</div>">
+<$transclude $variable="kn-tree-node" internalPrefix="" areaPrefix=<<areaPrefix>> delimiter=<<notesTreeDelimiter>> depth="0" activeNote=<<activeNote>> navHistory=<<navHistory>>/>
+</$list>
+</$let>
+<%endif%>
+</$let>
+
+<%endif%>
+
+<$let scopeLabel={{{ [<activeArea>!is[blank]then[in ]addsuffix<activeArea>] ~[[all areas]] }}}>
+<div class="kn-side-section" style="margin-top:16px;">Tiers <span style="font-weight:normal;font-size:0.8em;color:<<colour muted-foreground>>;">(<<scopeLabel>>)</span></div>
+<$button class="kn-nav-item">
+<$action-setfield $tiddler=<<navHistory>> text="[]"/>
+<$action-statewrap-set channel="section" value="browse"/>
+<$action-statewrap-set channel="area" value=<<activeArea>>/>
+<$action-setfield $tiddler="$:/state/rimir/knowledge-app/browse/tier" text="fleeting"/>
+<$action-setfield $tiddler="$:/state/rimir/knowledge-app/browse/type" text=""/>
+🪶 Fleeting
+<span style="float:right;color:<<colour muted-foreground>>;font-size:0.8em;">
+<$count filter="[all[shadows+tiddlers]prefix<areaPrefix>kn.tier[fleeting]]"/>
+</span>
+</$button>
+<$button class="kn-nav-item">
+<$action-setfield $tiddler=<<navHistory>> text="[]"/>
+<$action-statewrap-set channel="section" value="browse"/>
+<$action-statewrap-set channel="area" value=<<activeArea>>/>
+<$action-setfield $tiddler="$:/state/rimir/knowledge-app/browse/tier" text="developing"/>
+<$action-setfield $tiddler="$:/state/rimir/knowledge-app/browse/type" text=""/>
+🌱 Developing
+<span style="float:right;color:<<colour muted-foreground>>;font-size:0.8em;">
+<$count filter="[all[shadows+tiddlers]prefix<areaPrefix>kn.tier[developing]]"/>
+</span>
+</$button>
+<$button class="kn-nav-item">
+<$action-setfield $tiddler=<<navHistory>> text="[]"/>
+<$action-statewrap-set channel="section" value="browse"/>
+<$action-statewrap-set channel="area" value=<<activeArea>>/>
+<$action-setfield $tiddler="$:/state/rimir/knowledge-app/browse/tier" text="evergreen"/>
+<$action-setfield $tiddler="$:/state/rimir/knowledge-app/browse/type" text=""/>
+🌳 Evergreen
+<span style="float:right;color:<<colour muted-foreground>>;font-size:0.8em;">
+<$count filter="[all[shadows+tiddlers]prefix<areaPrefix>kn.tier[evergreen]]"/>
+</span>
+</$button>
+
+<div class="kn-side-section" style="margin-top:16px;">Types <span style="font-weight:normal;font-size:0.8em;color:<<colour muted-foreground>>;">(<<scopeLabel>>)</span></div>
+<$list filter="[{$:/config/rimir/knowledge-app/types}jsonindexes[]]" variable="idx">
+<$let
+	typeId={{{ [{$:/config/rimir/knowledge-app/types}jsonget<idx>,[id]] }}}
+	typeCaption={{{ [{$:/config/rimir/knowledge-app/types}jsonget<idx>,[caption]] }}}
+	typeIcon={{{ [{$:/config/rimir/knowledge-app/types}jsonget<idx>,[icon]] }}}
+	typeCountFilter=`[all[shadows+tiddlers]prefix<areaPrefix>kn.type[$(typeId)$]]`
+>
+<$button class="kn-nav-item">
+<$action-setfield $tiddler=<<navHistory>> text="[]"/>
+<$action-statewrap-set channel="section" value="browse"/>
+<$action-statewrap-set channel="area" value=<<activeArea>>/>
+<$action-setfield $tiddler="$:/state/rimir/knowledge-app/browse/tier" text=""/>
+<$action-setfield $tiddler="$:/state/rimir/knowledge-app/browse/type" text=<<typeId>>/>
+<<typeIcon>> <<typeCaption>>
+<span style="float:right;color:<<colour muted-foreground>>;font-size:0.8em;">
+<$count filter=<<typeCountFilter>>/>
+</span>
+</$button>
+</$let>
+</$list>
+</$let>
+
+</$let>
+
+</div>

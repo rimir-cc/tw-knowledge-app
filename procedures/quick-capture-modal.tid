@@ -1,0 +1,78 @@
+title: $:/plugins/rimir/knowledge-app/procedures/quick-capture-modal
+type: text/vnd.tiddlywiki
+
+\import $:/plugins/rimir/knowledge-app/filters/helpers
+
+<div class="kn-modal-overlay">
+<div class="kn-modal">
+<div class="kn-modal-header">
+<strong>+ New knowledge note</strong>
+<$button class="tc-btn-invisible" tooltip="Cancel">
+<$action-setfield $tiddler="$:/state/rimir/knowledge-app/capture/open" text=""/>
+✕
+</$button>
+</div>
+<div class="kn-modal-body">
+
+<$let
+	titleState="$:/state/rimir/knowledge-app/capture/title"
+	bodyState="$:/state/rimir/knowledge-app/capture/body"
+	typeState="$:/state/rimir/knowledge-app/capture/type"
+	activeArea={{{ [statewrap-get[area]] }}}
+>
+
+<$list filter="[<activeArea>!is[blank]]" variable="_">
+<div style="font-size:0.85em;color:<<colour muted-foreground>>;margin-bottom:4px;">
+Capturing into area: <strong><<activeArea>></strong>
+</div>
+</$list>
+
+<$edit-text tiddler=<<titleState>> tag="input" placeholder="Title (e.g. typescript-tips)" focus="true" class="tc-edit-texteditor"/>
+
+<div style="display:flex;gap:8px;align-items:center;font-size:0.9em;">
+<label style="color:<<colour muted-foreground>>;">Type:</label>
+<$select tiddler=<<typeState>> default="idea" class="tc-edit-texteditor">
+<$list filter="[{$:/config/rimir/knowledge-app/types}jsonindexes[]]" variable="idx">
+<$let
+	tId={{{ [{$:/config/rimir/knowledge-app/types}jsonget<idx>,[id]] }}}
+	tCaption={{{ [{$:/config/rimir/knowledge-app/types}jsonget<idx>,[caption]] }}}
+	tIcon={{{ [{$:/config/rimir/knowledge-app/types}jsonget<idx>,[icon]] }}}
+>
+<option value=<<tId>>><$text text=<<tIcon>>/> <$text text=<<tCaption>>/></option>
+</$let>
+</$list>
+</$select>
+</div>
+
+<$edit-text tiddler=<<bodyState>> tag="textarea" placeholder="Optional body wikitext" class="tc-edit-texteditor"/>
+
+<div class="kn-modal-actions">
+<$button class="tc-btn-invisible">
+<$action-setfield $tiddler="$:/state/rimir/knowledge-app/capture/open" text=""/>
+Cancel
+</$button>
+
+<$let
+	rawTitle={{{ [<titleState>get[text]] }}}
+	rawBody={{{ [<bodyState>get[text]] }}}
+	configPrefix={{{ [[$:/config/rimir/knowledge-app/capture-prefix]get[text]] ~[[knowledge/inbox/]] }}}
+	prefix={{{ [<activeArea>!is[blank]then[knowledge/]addsuffix<activeArea>addsuffix[/]] ~[<configPrefix>] }}}
+	finalTitle={{{ [<rawTitle>prefix[knowledge/]then<rawTitle>] ~[<rawTitle>addprefix<prefix>] }}}
+	contextValue={{{ [<activeArea>!is[blank]then[knowledge/]addsuffix<activeArea>] ~[[knowledge]] }}}
+	rawType={{{ [<typeState>get[text]] ~[[idea]] }}}
+>
+<$button class="rr-link-btn" disabled={{{ [<rawTitle>!is[blank]then[]] ~[[true]] }}}>
+<$action-createtiddler $basetitle=<<finalTitle>> $savetitle="$:/state/rimir/knowledge-app/capture/last-saved" text=<<rawBody>> tags="$:/tags/rimir/knowledge-app/note" kn.tier="fleeting" kn.type=<<rawType>> context=<<contextValue>>/>
+<$action-setfield $tiddler="$:/state/rimir/knowledge-app/capture/open" text=""/>
+<$action-setfield $tiddler=<<titleState>> text=""/>
+<$action-setfield $tiddler=<<bodyState>> text=""/>
+<$action-statewrap-navigate label={{{ [{$:/state/rimir/knowledge-app/capture/last-saved}] }}} section="note" note={{{ [{$:/state/rimir/knowledge-app/capture/last-saved}] }}}/>
+Create
+</$button>
+</$let>
+</div>
+</$let>
+
+</div>
+</div>
+</div>

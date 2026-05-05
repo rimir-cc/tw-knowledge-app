@@ -1,0 +1,6 @@
+title: $:/plugins/rimir/knowledge-app/templates/new-note
+type: text/vnd.tiddlywiki
+code-body: yes
+
+\context knowledge
+

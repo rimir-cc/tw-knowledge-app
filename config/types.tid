@@ -1,0 +1,18 @@
+title: $:/config/rimir/knowledge-app/types
+type: application/json
+
+[
+  {"id":"idea",         "caption":"Idea",         "icon":"💡", "group":"core"},
+  {"id":"source",       "caption":"Source",       "icon":"📚", "group":"core"},
+  {"id":"sink",         "caption":"Sink",         "icon":"📤", "group":"core"},
+  {"id":"pao",          "caption":"PAO",          "icon":"👤", "group":"entity"},
+  {"id":"place",        "caption":"Place",        "icon":"📍", "group":"entity"},
+  {"id":"index",        "caption":"Index",        "icon":"🗂", "group":"structural"},
+  {"id":"bibliography", "caption":"Bibliography", "icon":"📖", "group":"structural"},
+  {"id":"class",        "caption":"Class",        "icon":"🎓", "group":"structural"},
+  {"id":"publication",  "caption":"Publication",  "icon":"🏛", "group":"structural"},
+  {"id":"tool",         "caption":"Tool",         "icon":"🛠", "group":"structural"},
+  {"id":"meta",         "caption":"Meta",         "icon":"🪞", "group":"structural"},
+  {"id":"attachment",   "caption":"Attachment",   "icon":"📎", "group":"structural"},
+  {"id":"image",        "caption":"Image",        "icon":"🖼", "group":"structural"}
+]

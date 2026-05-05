@@ -1,0 +1,36 @@
+rdt.plugin-key: knowledge-app
+rdt.plugin-name: knowledge app
+rdt.section: FAQ
+rdt.order: 4
+title: $:/plugins/rimir/knowledge-app/doc/faq
+type: text/vnd.tiddlywiki
+
+<$transclude $tiddler="$:/plugins/rimir/doc-template/templates/page">
+<$fill $name="body">
+
+!! Why don't bare `[[_index]]` refs work?
+
+The namespace resolver expands pseudo-segments on the ref ITSELF, before walk-up runs. A bare `_index` has no preceding prefix, so the resolver can't find an index page. Use the absolute form `[[knowledge/topics/foo/_index]]` instead — the pseudo expands to `index` against the `knowledge/topics/foo` prefix.
+
+!! How do I add a new alias?
+
+Create a tiddler tagged `$:/tags/NamespaceAlias` with fields `short` (the ref users type) and `expands-to` (the rewritten ref). Example: `short=TS`, `expands-to=knowledge/topics/typescript`. Then `[[TS]]` resolves to that path. (Pattern aliases use `$:/tags/NamespacePatternAlias` with `pattern` regex + `replacement`.)
+
+!! How do I disable walk-up?
+
+Set `$:/config/rimir/namespace/walk-up` to `no`. Sibling-walk-up refs will then become unresolved unless their target is exact, aliased, or mounted.
+
+!! What's a "stub"?
+
+A note whose body is shorter than the stub threshold (default 200 characters; configurable in Settings). Stubs appear in the Write tab so you can flesh them out.
+
+!! Why does the Write tab exclude fleeting notes from Orphans / Dead-ends?
+
+Fleeting notes are inbox material — they're expected to lack incoming and outgoing links. Filtering them out keeps the maintenance views focused on notes that have already been promoted to developing / evergreen.
+
+!! Can knowledge notes link back to orga / priv content?
+
+Yes — write `[[orga/projects/foo]]` from a knowledge note. But the app does NOT surface backlinks FROM knowledge TO orga in the orga app (one-way coupling by design). Backlinks within the knowledge namespace work both ways.
+
+</$fill>
+</$transclude>

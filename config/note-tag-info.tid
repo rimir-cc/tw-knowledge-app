@@ -1,0 +1,4 @@
+title: $:/tags/rimir/knowledge-app/note
+type: text/vnd.tiddlywiki
+
+System tag for knowledge notes. Tiddlers tagged with this title are recognised by the knowledge app's filter helpers (`knowledge.notes()`, `knowledge.orphans()`, etc.). Quick-capture sets it automatically.

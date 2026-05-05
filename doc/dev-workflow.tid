@@ -1,0 +1,53 @@
+rdt.plugin-key: knowledge-app
+rdt.plugin-name: knowledge app
+rdt.section: Dev workflow
+rdt.order: 6
+title: $:/plugins/rimir/knowledge-app/doc/dev-workflow
+type: text/vnd.tiddlywiki
+
+<$transclude $tiddler="$:/plugins/rimir/doc-template/templates/page">
+<$fill $name="body">
+
+!! Run Jasmine tests
+
+The plugin ships with its own minimal test edition:
+
+```
+TIDDLYWIKI_CLI_MODE=1 \
+  TIDDLYWIKI_PLUGIN_PATH=dev-wiki/plugins \
+  npx tiddlywiki dev-wiki/plugins/rimir/knowledge-app/test-edition \
+  --test --spec="knowledge-app:"
+```
+
+Tests live in `test/test-*.js` (tagged `$:/tags/test-spec`):
+
+* `test-helpers.js` — filter `\function`s in the dev-wiki context
+* `test-broken-refs.js` — `knowledge-has-broken-ref` filter operator
+* `test-pseudo-index.js` — `_index` pseudo (registration + end-to-end resolution)
+* `test-tier-pill.js` — pill class + cycle behaviour
+* `test-capture-action.js` — the quick-capture action sequence
+
+!! Run Playwright E2E
+
+```
+npx playwright test tw-tests/tests/e2e/knowledge-app.spec.js \
+  --config tw-tests/playwright.config.js
+```
+
+The Playwright wiki (`tw-tests/pw-edition/`) loads the plugin and exposes the HTTP API for fixtures.
+
+!! Restart rules
+
+| Change | Restart? |
+|JS pseudo (`pseudo/_index.js`) | yes (module reload) |
+|JS filter (`filters/broken-refs.js`) | yes (module reload) |
+|All `.tid` (apps, views, procedures, filters, config) | no (live re-read) |
+
+!! Adding a new view
+
+# Create `views/<name>.tid` with `tags: $:/tags/rimir/appify/view` and a `<div class="kn-app">…</div>` body.
+# Append to `apps/knowledge-splits.tid` JSON: `{ "view": "$:/plugins/rimir/knowledge-app/views/<name>", "label": "…", "condition": "[statewrap-get[section]match[<name>]]" }`.
+# Add a button to `apps/knowledge-topbar.tid` that sets `section=<name>`.
+
+</$fill>
+</$transclude>
