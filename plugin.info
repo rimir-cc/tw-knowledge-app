@@ -3,7 +3,7 @@
     "description": "Zettelkasten-style knowledge app on top of namespace + appify",
     "name": "knowledge app",
     "author": "rimir",
-    "version": "0.1.13",
+    "version": "0.1.14",
     "core-version": ">=5.4.0",
     "plugin-type": "plugin",
     "dependents": [

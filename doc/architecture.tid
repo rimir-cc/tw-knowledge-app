@@ -38,5 +38,16 @@ The broken-ref detector is a JS filter operator (`knowledge-has-broken-ref`) tha
 
 `pseudo/_index.js` (module-type `rimir-ns-pseudo`) — `_index` segment resolves to `index` or `README` if either exists under the preceding prefix. Use inside an absolute ref like `[[knowledge/topics/foo/_index]]`.
 
+!! Type-specific forms
+
+Each note type (defined in `config/types.tid`) can opt into two extension points:
+
+# ''Capture form'' — `forms/capture-<type>`. Transcluded inside the quick-capture modal between the type select and the body textarea (only when the chosen type has a matching tiddler). Inputs bind to dedicated state tiddlers under `$:/state/rimir/knowledge-app/capture/<type>/<field>` so they survive type-switching and don't collide with the generic title/body state. The Create action of the modal applies the captured values via a per-type `<$action-setfield>` block, then resets that state.
+# ''Render form'' — `forms/render-<type>`. Transcluded in `views/note` ''above'' the body, with the outer `<<noteTitle>>` variable in scope. Reads `kn.*` fields from the note and produces a structured card (table, embeds, controls). Free to provide its own inline-edit affordances (the `source` form uses one state tiddler per note at `$:/state/rimir/knowledge-app/source-edit/<noteTitle>` whose text is the field name being edited).
+
+Helpers shared between the two halves of a type live in `forms/<type>-helpers.tid` and are pulled in via `\import`. The `source` type uses `forms/source-helpers.tid` for `knowledge.yt-id`, `knowledge.medium-icon`, `knowledge.consume-icon`.
+
+Adding a new type is therefore: declare it in `config/types.tid` and (optionally) add `forms/capture-<id>.tid` and/or `forms/render-<id>.tid`. No core code change.
+
 </$fill>
 </$transclude>

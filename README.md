@@ -6,7 +6,8 @@ A TiddlyWiki plugin: zettelkasten-style knowledge app powered by [`rimir/namespa
 
 Notes live under the `knowledge/…` title namespace. They link with short refs (`[[Foo]]`) — the namespace plugin walks up the source path, plus aliases / mounts / pseudos. This plugin adds the app surface:
 
-- **Quick-capture** — title + body modal in the topbar.
+- **Quick-capture** — title + body modal in the topbar (with autocomplete + duplicate detection).
+- **Type-specific forms** — opt-in capture and render forms per type (e.g. `source` adds caption/author/medium/url/published/consume-status/consume-date plus a YouTube embed and per-row inline editing).
 - **Three-tier status** — fleeting → developing → evergreen.
 - **Backlinks panel** in the Note view (reads namespace's reverse index).
 - **Write tab** — orphans, stubs, dead-ends, broken refs.

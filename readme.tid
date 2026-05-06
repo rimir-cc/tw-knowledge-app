@@ -12,7 +12,8 @@ Deep folder hierarchies (`knowledge/topics/programming/typescript/Foo`) are grea
 !! Features
 
 * ''Areas'' — first-class knowledge areas (LLM, IT-Security, Health, Gaming + user-creatable) live as `knowledge/<area>/…`. Topbar pill row switches between them; quick-capture and the `\context` line follow the active area automatically. Cross-area linking works out of the box via namespace walk-up.
-* ''Quick-capture'' — title + body modal in the topbar; new notes land at `knowledge/<area>/inbox/…` (or `knowledge/inbox/…` when no area is active) with the right `\context` pragma pre-set.
+* ''Quick-capture'' — title + body modal in the topbar; new notes land at `knowledge/<area>/inbox/…` (or `knowledge/inbox/…` when no area is active) with the right `\context` pragma pre-set. Title autocomplete suggests existing matches; duplicate titles disable the Create button.
+* ''Type-specific forms'' — note types can ship a capture form (extra fields shown in the modal) and a render form (structured display in the Note view). First example: ''source'' adds caption / author / medium / URL / published / consume-status / consume-date, with a YouTube embed (small / medium / large player) and per-row pen-icon inline editing.
 * ''Three-tier status'' — fleeting, developing, evergreen (TZK-style). One click to promote.
 * ''Backlinks panel'' — reads namespace's reverse index (no setup needed).
 * ''Write tab'' — orphans, stubs, dead-ends, broken refs. Maintenance at a glance.

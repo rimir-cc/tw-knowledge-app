@@ -18,7 +18,8 @@ A zettelkasten-style note app for TiddlyWiki. Notes live under the `knowledge/�
 
 !! Features
 
-* Quick-capture from the topbar — title + body modal, prepends `\context knowledge`, lands at `knowledge/inbox/<slug>`.
+* Quick-capture from the topbar — title + body modal, lands at `knowledge/<area>/inbox/<slug>` (or `knowledge/inbox/<slug>` when no area is active). Autocomplete suggests existing matches; duplicate titles disable Create.
+* Type-specific forms — each note type can ship `forms/capture-<type>` (extra modal fields) and `forms/render-<type>` (structured display above the body). First example: ''source'' (TZK-style) with caption / author / medium / url / published / consume-status / consume-date, a YouTube embed when applicable, and a hover pen-icon to inline-edit each field.
 * Three note tiers: `fleeting` → `developing` → `evergreen`. Click the pill to promote.
 * Backlinks panel reads namespace's reverse index (`ns-backlinks`).
 * Write tab — orphans, stubs, dead-ends, broken refs.

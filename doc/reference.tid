@@ -31,7 +31,11 @@ type: text/vnd.tiddlywiki
 |`$:/state/rimir/knowledge-app/capture/open` | "yes" while quick-capture modal is visible |
 |`$:/state/rimir/knowledge-app/capture/title` | bound to the modal's title input |
 |`$:/state/rimir/knowledge-app/capture/body` | bound to the modal's body textarea |
+|`$:/state/rimir/knowledge-app/capture/type` | bound to the modal's type select |
+|`$:/state/rimir/knowledge-app/capture/source/<field>` | per-field state for the source capture form (`caption`, `author`, `medium`, `url`, `published`, `published-mode`, `consume-status`, `consume-date`) |
 |`$:/state/rimir/knowledge-app/capture/last-saved` | title of the most recently captured note |
+|`$:/state/rimir/knowledge-app/source-edit/<noteTitle>` | name of the source field currently being inline-edited (or blank) |
+|`$:/state/rimir/knowledge-app/source-yt-size/<noteTitle>` | `small` (default) / `medium` / `large` — chosen YouTube player size |
 |`$:/state/rimir/knowledge-app/search-query` | live search input |
 |`$:/state/rimir/knowledge-app/browse/tier` | currently active tier chip in Browse |
 
@@ -55,6 +59,21 @@ type: text/vnd.tiddlywiki
 * `\function knowledge.dead-ends()` — zero forward links
 * `\function knowledge.stubs()` — body length below threshold
 * `\function knowledge.broken()` — at least one unresolved ref
+
+!! Source helper functions
+
+Defined in `forms/source-helpers.tid`, imported by `forms/capture-source` and `forms/render-source` via `\import`.
+
+* `\function knowledge.yt-id(url)` — extracts the 11-char YouTube video ID from `watch?v=`, `youtu.be/` or `/embed/` URL forms; empty when the URL doesn't parse.
+* `\function knowledge.medium-icon(medium)` — emoji per medium type (article 📰, book 📕, youtube 📺, podcast 🎙, blog ✍, fallback 🔗).
+* `\function knowledge.consume-icon(status)` — emoji per consume status (created ✏, partial ⏳, consumed ✅, reconsumed 🔁, fallback •).
+
+!! Type-specific form tiddlers
+
+| Title | Use |
+|`forms/capture-<type>` | extra modal fields for `<type>`. Transcluded by `procedures/quick-capture-modal` when the type select matches |
+|`forms/render-<type>` | structured display for `<type>`. Transcluded by `views/note` above the body when the note's `kn.type` matches |
+|`forms/<type>-helpers` | shared `\function`s for the type's two halves (imported via `\import`) |
 
 !! Pseudo modules
 

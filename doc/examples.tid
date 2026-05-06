@@ -49,5 +49,24 @@ Create a tiddler `knowledge/topics/typescript/index` summarising the topic. From
 
 In Note view, click the tier pill. It cycles `fleeting → developing → evergreen → fleeting`. Tier counts on Home and the sidebar update immediately.
 
+!! Capture a source note (TZK-style)
+
+Click ''+ Note'', set ''Type'' to ''Source''. Extra fields appear:
+
+* ''Caption'' — display label (e.g. "Atomic Habits").
+* ''Author'' — e.g. "James Clear".
+* ''Medium'' — article / book / youtube / podcast / blog.
+* ''URL'' — full link (any form).
+* ''Published'' — toggle between ''Year'' (number input) and ''Date'' (full date picker).
+* ''Consume status'' — created / partial / consumed / reconsumed.
+* ''Consume date'' — date picker.
+
+After Create, the new note opens with a structured ''source card'' above the body:
+
+* If the URL parses to a YouTube video ID (e.g. `https://www.youtube.com/watch?v=…`, `https://youtu.be/…`, `https://www.youtube.com/embed/…`), an embedded player appears at the top with three size buttons below it (small / medium / large; small by default per note).
+* The card header shows the medium icon + caption (or the title if no caption was set).
+* Below, a definition list lists Author, Medium (icon + name), Published, URL (clickable), Status (icon + name), Consumed.
+* Hovering any row reveals a pen icon — click it to inline-edit just that field; click ✓ to save and exit.
+
 </$fill>
 </$transclude>
