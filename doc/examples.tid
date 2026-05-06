@@ -19,6 +19,18 @@ Click ''+ Note'' in the topbar. Type ''typescript-tips'' and submit. A new tiddl
 
 …and `kn.tier=fleeting`.
 
+!! Descendant linking from a deep parent
+
+In a note titled `knowledge/llm/vendor/deepseek/model/v4`, write:
+
+```
+See the engineering deep-dive at [[yt/AIsearch/engineeringDSV4]].
+```
+
+The link resolves to `knowledge/llm/vendor/deepseek/model/v4/yt/AIsearch/engineeringDSV4` — namespace's ''self-prefix'' stage tries `<sourceTitle>/<ref>` automatically (this plugin enables that flag by default; toggle it off in ControlPanel under Namespace settings if you want strict resolution).
+
+The opposite direction (child → parent) still works via walk-up: from the deep note above, `[[v4]]` finds the parent `…/model/v4` because walk-up climbs ancestor segments.
+
 !! Linking by short ref
 
 In a note titled `knowledge/topics/programming/typescript/Foo`, write:
