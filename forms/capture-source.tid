@@ -1,0 +1,75 @@
+title: $:/plugins/rimir/knowledge-app/forms/capture-source
+type: text/vnd.tiddlywiki
+
+\whitespace trim
+
+<!-- Extra source-specific fields shown in the quick-capture modal when
+     type=source. Bound to dedicated state tiddlers under
+     $:/state/rimir/knowledge-app/capture/source/<field> so they don't
+     collide with the generic title/body state and survive type-switching.
+
+     Published has two granularities (year-only / full date) selected via
+     a small toggle. The selected granularity is stored in
+     .../source/published-mode and the value lives in .../source/published. -->
+
+<div class="kn-source-form">
+
+<div class="kn-form-row">
+<label class="kn-form-label">Caption</label>
+<$edit-text tiddler="$:/state/rimir/knowledge-app/capture/source/caption" tag="input" placeholder="Display name (e.g. Atomic Habits)" class="tc-edit-texteditor"/>
+</div>
+
+<div class="kn-form-row">
+<label class="kn-form-label">Author</label>
+<$edit-text tiddler="$:/state/rimir/knowledge-app/capture/source/author" tag="input" placeholder="e.g. James Clear" class="tc-edit-texteditor"/>
+</div>
+
+<div class="kn-form-row">
+<label class="kn-form-label">Medium</label>
+<$select tiddler="$:/state/rimir/knowledge-app/capture/source/medium" default="article" class="tc-edit-texteditor">
+<option value="article">📰 Article</option>
+<option value="book">📕 Book</option>
+<option value="youtube">📺 YouTube</option>
+<option value="podcast">🎙 Podcast</option>
+<option value="blog">✍ Blog</option>
+</$select>
+</div>
+
+<div class="kn-form-row">
+<label class="kn-form-label">URL</label>
+<$edit-text tiddler="$:/state/rimir/knowledge-app/capture/source/url" tag="input" placeholder="https://..." class="tc-edit-texteditor"/>
+</div>
+
+<div class="kn-form-row">
+<label class="kn-form-label">Published</label>
+<div class="kn-form-published">
+<$let pubMode={{{ [[$:/state/rimir/knowledge-app/capture/source/published-mode]get[text]] ~[[year]] }}}>
+<$select tiddler="$:/state/rimir/knowledge-app/capture/source/published-mode" default="year" class="tc-edit-texteditor kn-form-published-mode">
+<option value="year">Year</option>
+<option value="date">Date</option>
+</$select>
+<%if [<pubMode>match[date]] %>
+<$edit-text tiddler="$:/state/rimir/knowledge-app/capture/source/published" tag="input" type="date" class="tc-edit-texteditor"/>
+<%else%>
+<$edit-text tiddler="$:/state/rimir/knowledge-app/capture/source/published" tag="input" type="number" placeholder="2024" class="tc-edit-texteditor"/>
+<%endif%>
+</$let>
+</div>
+</div>
+
+<div class="kn-form-row">
+<label class="kn-form-label">Consume status</label>
+<$select tiddler="$:/state/rimir/knowledge-app/capture/source/consume-status" default="created" class="tc-edit-texteditor">
+<option value="created">✏ Created</option>
+<option value="partial">⏳ Partial</option>
+<option value="consumed">✅ Consumed</option>
+<option value="reconsumed">🔁 Reconsumed</option>
+</$select>
+</div>
+
+<div class="kn-form-row">
+<label class="kn-form-label">Consume date</label>
+<$edit-text tiddler="$:/state/rimir/knowledge-app/capture/source/consume-date" tag="input" type="date" class="tc-edit-texteditor"/>
+</div>
+
+</div>

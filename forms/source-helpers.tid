@@ -1,0 +1,26 @@
+title: $:/plugins/rimir/knowledge-app/forms/source-helpers
+type: text/vnd.tiddlywiki
+
+\whitespace trim
+
+<!-- Helpers for source-typed notes (TZK-style). Used by both
+     forms/capture-source and forms/render-source. -->
+
+<!-- knowledge.yt-id(url) — extract the 11-char YouTube video ID from
+     watch?v= / youtu.be / embed/ URL forms; empty if not a YouTube URL.
+     The regex uses (.{11}) instead of ([a-zA-Z0-9_-]{11}) because TW's
+     filter parser breaks on a literal `[` inside an operand (closes the
+     run early). The :filter[length[]match[11]] guard then drops the
+     original URL when search-replace didn't match (search-replace
+     returns the input unchanged on no-match). -->
+\function knowledge.yt-id(url) [<url>search-replace::regexp[.*(?:youtube\.com/watch\?v=|youtu\.be/|youtube\.com/embed/)(.{11}).*],[$1]] :filter[<currentTiddler>length[]match[11]]
+
+<!-- knowledge.is-youtube(url) — "yes" if the URL parses as a YouTube ref. -->
+\function knowledge.is-youtube(url) [<url>!is[blank]function[knowledge.yt-id]!is[blank]then[yes]]
+
+<!-- knowledge.medium-icon(medium) — emoji per medium type. Single-line
+     body — TW \function is one line only (tw-wikitext-gotchas.md #8). -->
+\function knowledge.medium-icon(medium) [<medium>match[article]then[📰]] ~[<medium>match[book]then[📕]] ~[<medium>match[youtube]then[📺]] ~[<medium>match[podcast]then[🎙]] ~[<medium>match[blog]then[✍]] ~[[🔗]]
+
+<!-- knowledge.consume-icon(status) — emoji per consume status. -->
+\function knowledge.consume-icon(status) [<status>match[created]then[✏]] ~[<status>match[partial]then[⏳]] ~[<status>match[consumed]then[✅]] ~[<status>match[reconsumed]then[🔁]] ~[[•]]

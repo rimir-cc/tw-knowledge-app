@@ -77,6 +77,18 @@ Capturing into area: <strong><<activeArea>></strong>
 </$select>
 </div>
 
+<!-- Type-specific extra fields. The forms/capture-<type> tiddler is
+     transcluded when present (today: source). Future types just need
+     a forms/capture-<id>.tid to plug in. -->
+<$let
+	currentType={{{ [<typeState>get[text]] ~[[idea]] }}}
+	formTiddler={{{ [[$:/plugins/rimir/knowledge-app/forms/capture-]addsuffix<currentType>] }}}
+>
+<$list filter="[<formTiddler>is[shadow]] [<formTiddler>is[tiddler]] +[limit[1]]" variable="_">
+<$transclude $tiddler=<<formTiddler>> $mode="block"/>
+</$list>
+</$let>
+
 <$edit-text tiddler=<<bodyState>> tag="textarea" placeholder="Optional body wikitext" class="tc-edit-texteditor"/>
 
 <div class="kn-modal-actions">
@@ -97,6 +109,26 @@ Cancel
 >
 <$button class="rr-link-btn" disabled={{{ [<rawTitle>is[blank]then[yes]] ~[<titleExists>!is[blank]then[yes]] ~[[no]] }}}>
 <$action-createtiddler $basetitle=<<finalTitle>> $savetitle="$:/state/rimir/knowledge-app/capture/last-saved" text=<<rawBody>> tags="$:/tags/rimir/knowledge-app/note" kn.tier="fleeting" kn.type=<<rawType>> context=<<contextValue>>/>
+<!-- Type-specific fields: pulled from the per-type capture form's state
+     tiddlers and applied as a second pass on the just-created tiddler. -->
+<$list filter="[<rawType>match[source]]" variable="_">
+<$action-setfield $tiddler={{$:/state/rimir/knowledge-app/capture/last-saved}}
+	caption={{$:/state/rimir/knowledge-app/capture/source/caption}}
+	kn.author={{$:/state/rimir/knowledge-app/capture/source/author}}
+	kn.medium={{$:/state/rimir/knowledge-app/capture/source/medium}}
+	kn.url={{$:/state/rimir/knowledge-app/capture/source/url}}
+	kn.published={{$:/state/rimir/knowledge-app/capture/source/published}}
+	kn.consume-status={{$:/state/rimir/knowledge-app/capture/source/consume-status}}
+	kn.consume-date={{$:/state/rimir/knowledge-app/capture/source/consume-date}}
+/>
+<!-- Reset source-specific state -->
+<$action-setfield $tiddler="$:/state/rimir/knowledge-app/capture/source/caption" text=""/>
+<$action-setfield $tiddler="$:/state/rimir/knowledge-app/capture/source/author" text=""/>
+<$action-setfield $tiddler="$:/state/rimir/knowledge-app/capture/source/url" text=""/>
+<$action-setfield $tiddler="$:/state/rimir/knowledge-app/capture/source/published" text=""/>
+<$action-setfield $tiddler="$:/state/rimir/knowledge-app/capture/source/published-mode" text="year"/>
+<$action-setfield $tiddler="$:/state/rimir/knowledge-app/capture/source/consume-date" text=""/>
+</$list>
 <$action-setfield $tiddler="$:/state/rimir/knowledge-app/capture/open" text=""/>
 <$action-setfield $tiddler=<<titleState>> text=""/>
 <$action-setfield $tiddler=<<bodyState>> text=""/>

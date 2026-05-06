@@ -80,6 +80,17 @@ No
 <code><$text text=<<noteTitle>>/></code> · modified <$text text={{{ [<noteTitle>get[modified]format:date[YYYY-0MM-0DD]] }}}/>
 </div>
 
+<!-- Type-specific structured display (above the body). The
+     forms/render-<type> tiddler is transcluded when present. -->
+<$let
+	noteType={{{ [<noteTitle>get[kn.type]] }}}
+	renderTiddler={{{ [[$:/plugins/rimir/knowledge-app/forms/render-]addsuffix<noteType>] }}}
+>
+<$list filter="[<renderTiddler>is[shadow]] [<renderTiddler>is[tiddler]] +[limit[1]]" variable="_">
+<$transclude $tiddler=<<renderTiddler>> $mode="block"/>
+</$list>
+</$let>
+
 <%if [<editState>get[text]match[yes]] %>
 <$let editTiddler=<<noteTitle>> wrapClass="kn-inline-edit-wrap" editAutoFocus="yes">
 <$transclude $tiddler="$:/plugins/rimir/theme/rr-text-editor"/>

@@ -1,0 +1,139 @@
+title: $:/plugins/rimir/knowledge-app/forms/render-source
+type: text/vnd.tiddlywiki
+
+\whitespace trim
+
+\import $:/plugins/rimir/knowledge-app/forms/source-helpers
+
+\procedure kn-source-row(label, field, value, control:"input")
+<dt><$text text=<<label>>/></dt>
+<dd>
+<%if [<editField>match<field>] %>
+<span class="kn-source-edit-row">
+<$list filter="[<control>match[input]] [<control>match[url]] +[limit[1]]" variable="_">
+<$edit-text tiddler=<<noteTitle>> field=<<field>> tag="input" class="tc-edit-texteditor"/>
+</$list>
+<$list filter="[<control>match[date]]" variable="_">
+<$edit-text tiddler=<<noteTitle>> field=<<field>> tag="input" type="date" class="tc-edit-texteditor"/>
+</$list>
+<$list filter="[<control>match[year]]" variable="_">
+<$edit-text tiddler=<<noteTitle>> field=<<field>> tag="input" type="number" class="tc-edit-texteditor"/>
+</$list>
+<$list filter="[<control>match[medium]]" variable="_">
+<$select tiddler=<<noteTitle>> field=<<field>> default="article" class="tc-edit-texteditor">
+<option value="article">📰 Article</option>
+<option value="book">📕 Book</option>
+<option value="youtube">📺 YouTube</option>
+<option value="podcast">🎙 Podcast</option>
+<option value="blog">✍ Blog</option>
+</$select>
+</$list>
+<$list filter="[<control>match[consume-status]]" variable="_">
+<$select tiddler=<<noteTitle>> field=<<field>> default="created" class="tc-edit-texteditor">
+<option value="created">✏ Created</option>
+<option value="partial">⏳ Partial</option>
+<option value="consumed">✅ Consumed</option>
+<option value="reconsumed">🔁 Reconsumed</option>
+</$select>
+</$list>
+<$button class="tc-btn-invisible kn-source-row-done" tooltip="Done">
+<$action-setfield $tiddler=<<editStateTiddler>> text=""/>
+✓
+</$button>
+</span>
+<%else%>
+<span class="kn-source-row-display">
+<%if [<value>is[blank]] %>
+<span class="kn-source-row-empty">—</span>
+<%else%>
+<$list filter="[<control>match[url]]" variable="_">
+<a href=<<value>> target="_blank" rel="noopener noreferrer" class="tc-tiddlylink-external"><$text text=<<value>>/></a>
+</$list>
+<$list filter="[<control>match[medium]]" variable="_">
+<$text text={{{ [function[knowledge.medium-icon],<value>] }}}/> <$text text=<<value>>/>
+</$list>
+<$list filter="[<control>match[consume-status]]" variable="_">
+<$text text={{{ [function[knowledge.consume-icon],<value>] }}}/> <$text text=<<value>>/>
+</$list>
+<$list filter="[<control>match[input]] [<control>match[date]] [<control>match[year]] +[limit[1]]" variable="_">
+<$text text=<<value>>/>
+</$list>
+<%endif%>
+<$button class="tc-btn-invisible kn-source-row-edit" tooltip="Edit">
+<$action-setfield $tiddler=<<editStateTiddler>> text=<<field>>/>
+✎
+</$button>
+</span>
+<%endif%>
+</dd>
+\end
+
+<$let
+	editStateTiddler={{{ [[$:/state/rimir/knowledge-app/source-edit/]addsuffix<noteTitle>] }}}
+	editField={{{ [<editStateTiddler>get[text]] }}}
+	ytSizeStateTiddler={{{ [[$:/state/rimir/knowledge-app/source-yt-size/]addsuffix<noteTitle>] }}}
+	ytSize={{{ [<ytSizeStateTiddler>get[text]] ~[[small]] }}}
+	caption={{{ [<noteTitle>get[caption]] }}}
+	author={{{ [<noteTitle>get[kn.author]] }}}
+	medium={{{ [<noteTitle>get[kn.medium]] }}}
+	url={{{ [<noteTitle>get[kn.url]] }}}
+	published={{{ [<noteTitle>get[kn.published]] }}}
+	consumeStatus={{{ [<noteTitle>get[kn.consume-status]] }}}
+	consumeDate={{{ [<noteTitle>get[kn.consume-date]] }}}
+	mediumIcon={{{ [function[knowledge.medium-icon],<medium>] }}}
+	consumeIcon={{{ [function[knowledge.consume-icon],<consumeStatus>] }}}
+	ytId={{{ [<url>!is[blank]search-replace::regexp[.*(?:youtube\.com/watch\?v=|youtu\.be/|youtube\.com/embed/)(.{11}).*],[$1]] :filter[<currentTiddler>length[]match[11]] }}}
+	ytEmbedUrl={{{ [<ytId>!is[blank]addprefix[https://www.youtube.com/embed/]] }}}
+>
+
+<div class="kn-source-card">
+
+<%if [<ytEmbedUrl>!is[blank]] %>
+<div class={{{ [[kn-source-embed kn-yt-]addsuffix<ytSize>] }}}>
+<iframe class="kn-source-yt" width="560" height="315" src=<<ytEmbedUrl>> frameborder="0" allowfullscreen="allowfullscreen"></iframe>
+</div>
+<div class="kn-yt-sizebar">
+<$list filter="small medium large" variable="size">
+<$button class={{{ [<ytSize>match<size>then[kn-yt-size-btn kn-yt-size-active]] ~[[kn-yt-size-btn]] }}} tooltip={{{ [[Player size: ]addsuffix<size>] }}}>
+<$action-setfield $tiddler=<<ytSizeStateTiddler>> text=<<size>>/>
+<$text text=<<size>>/>
+</$button>
+</$list>
+</div>
+<%endif%>
+
+<div class="kn-source-head">
+<span class="kn-source-medium-icon"><$text text=<<mediumIcon>>/></span>
+<%if [<editField>match[caption]] %>
+<span class="kn-source-edit-row kn-source-caption-edit">
+<$edit-text tiddler=<<noteTitle>> field="caption" tag="input" class="tc-edit-texteditor"/>
+<$button class="tc-btn-invisible kn-source-row-done" tooltip="Done">
+<$action-setfield $tiddler=<<editStateTiddler>> text=""/>
+✓
+</$button>
+</span>
+<%else%>
+<%if [<caption>!is[blank]] %>
+<span class="kn-source-caption"><$text text=<<caption>>/></span>
+<%else%>
+<span class="kn-source-caption kn-source-caption-empty"><$text text=<<noteTitle>>/></span>
+<%endif%>
+<$button class="tc-btn-invisible kn-source-row-edit" tooltip="Edit caption">
+<$action-setfield $tiddler=<<editStateTiddler>> text="caption"/>
+✎
+</$button>
+<%endif%>
+</div>
+
+<dl class="kn-source-fields">
+<$transclude $variable="kn-source-row" label="Author" field="kn.author" value=<<author>> control="input"/>
+<$transclude $variable="kn-source-row" label="Medium" field="kn.medium" value=<<medium>> control="medium"/>
+<$transclude $variable="kn-source-row" label="Published" field="kn.published" value=<<published>> control="input"/>
+<$transclude $variable="kn-source-row" label="URL" field="kn.url" value=<<url>> control="url"/>
+<$transclude $variable="kn-source-row" label="Status" field="kn.consume-status" value=<<consumeStatus>> control="consume-status"/>
+<$transclude $variable="kn-source-row" label="Consumed" field="kn.consume-date" value=<<consumeDate>> control="date"/>
+</dl>
+
+</div>
+
+</$let>
