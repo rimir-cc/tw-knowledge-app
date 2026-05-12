@@ -525,6 +525,12 @@ type: text/vnd.tiddlywiki
     padding: 16px;
 }
 
+/* Title-locked variant: hide the EditTemplate's rename row so the caller's
+   pre-derived title can't be changed in the modal. Used by tw-mindmap when
+   the title was already computed from the node label slug. */
+.kn-popup-edit-title-locked .tc-titlebar { display: none; }
+.kn-popup-edit-title-locked .tc-tiddler-edit-title { pointer-events: none; opacity: 0.6; }
+
 /* Strong unresolved hint, scoped to the app */
 .kn-app .tc-tiddlylink.ns-unresolved {
     color: <<colour muted-foreground>>;

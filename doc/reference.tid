@@ -38,6 +38,8 @@ type: text/vnd.tiddlywiki
 |`$:/state/rimir/knowledge-app/source-yt-size/<noteTitle>` | `small` (default) / `medium` / `large` — chosen YouTube player size |
 |`$:/state/rimir/knowledge-app/search-query` | live search input |
 |`$:/state/rimir/knowledge-app/browse/tier` | currently active tier chip in Browse |
+|`$:/state/rimir/knowledge-app/popup-edit/target` | title of the note being edited in the popup; empty when modal closed |
+|`$:/state/rimir/knowledge-app/popup-edit/title-lock` | `yes` hides the EditTemplate title row and disables the title input — set by callers (e.g. tw-mindmap) that have pre-derived the title and don't want it renamed. Cleared by Save and Cancel |
 
 !! Config tiddlers
 

@@ -6,10 +6,11 @@ type: text/vnd.tiddlywiki
 <$let
 	target={{{ [[$:/state/rimir/knowledge-app/popup-edit/target]get[text]] }}}
 	draftTitle={{{ [[Draft of ']addsuffix<target>addsuffix[']] }}}
+	titleLock={{{ [[$:/state/rimir/knowledge-app/popup-edit/title-lock]get[text]match[yes]then[kn-popup-edit-title-locked]] ~[[]] }}}
 >
 
 <div class="kn-modal-overlay kn-popup-edit-overlay">
-<div class="kn-popup-edit">
+<div class={{{ [[kn-popup-edit ]addsuffix<titleLock>trim[]] }}}>
 <div class="kn-popup-edit-header">
 <strong>Edit: <$text text=<<target>>/></strong>
 <span class="kn-popup-edit-actions">
@@ -17,11 +18,13 @@ type: text/vnd.tiddlywiki
 <$button class="rr-link-btn" tooltip="Save and close">
 <$action-sendmessage $message="tm-save-tiddler" $param=<<draftTitle>>/>
 <$action-setfield $tiddler="$:/state/rimir/knowledge-app/popup-edit/target" text=""/>
+<$action-setfield $tiddler="$:/state/rimir/knowledge-app/popup-edit/title-lock" text=""/>
 Save &amp; Close
 </$button>
 <$button class="tc-btn-invisible" tooltip="Cancel — discard the draft">
 <$action-sendmessage $message="tm-cancel-tiddler" $param=<<draftTitle>>/>
 <$action-setfield $tiddler="$:/state/rimir/knowledge-app/popup-edit/target" text=""/>
+<$action-setfield $tiddler="$:/state/rimir/knowledge-app/popup-edit/title-lock" text=""/>
 Cancel
 </$button>
 </$navigator>
