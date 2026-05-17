@@ -13,6 +13,8 @@ describe("knowledge-app: _index pseudo", function() {
 
 	var pseudo = require("$:/plugins/rimir/knowledge-app/pseudo/_index.js");
 	var resolver = require("$:/plugins/rimir/namespace/resolver.js");
+	var flags = require("$:/plugins/rimir/namespace/featureflags.js");
+	var scope = require("$:/plugins/rimir/namespace/scope.js");
 
 	function setupWiki(tiddlers) {
 		var wiki = new $tw.Wiki();
@@ -23,6 +25,16 @@ describe("knowledge-app: _index pseudo", function() {
 		wiki.addIndexersToWiki();
 		return wiki;
 	}
+
+	// Drop cached state from earlier specs in the umbrella suite — without this,
+	// a prior test that set scope=restricted (or disabled pseudo-expansion via
+	// the flags cache) leaks into the end-to-end resolution and the test fails
+	// non-deterministically depending on Jasmine's random seed.
+	beforeEach(function() {
+		flags.invalidate();
+		scope.invalidate();
+		resolver.invalidatePseudoCache();
+	});
 
 	it("exports a name '_index'", function() {
 		expect(pseudo.name).toBe("_index");
