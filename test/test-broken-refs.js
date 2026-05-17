@@ -76,4 +76,38 @@ describe("knowledge-app: knowledge-has-broken-ref", function() {
 		expect(run(wiki, "[[knowledge/notes/Ghost]knowledge-has-broken-ref[]]"))
 			.toEqual([]);
 	});
+
+	it("uses the source tiddler's context field when no \\context pragma is present", function() {
+		// A note can declare its namespace context via the `context` field
+		// (without an explicit \context pragma in the body). The broken-refs
+		// detector must honour that field for resolution to match render-time.
+		var wiki = setupWiki([
+			{title: "knowledge/topics/python/intro",
+			 text: "See [[advanced]] and [[other]].",
+			 context: "knowledge/topics/python",
+			 tags: "$:/tags/rimir/knowledge-app/note"},
+			{title: "knowledge/topics/python/advanced", text: ""}
+			// "other" intentionally missing — should mark the note as broken
+		]);
+		wiki.addTiddler({title: "$:/config/rimir/namespace/implicit-context", text: "yes"});
+		flags.invalidate();
+		expect(run(wiki, "[[knowledge/topics/python/intro]knowledge-has-broken-ref[]]"))
+			.toEqual(["knowledge/topics/python/intro"]);
+	});
+
+	it("does not flag a note whose refs resolve via the context field", function() {
+		// Mirror of the previous case: when context-field resolution succeeds
+		// for every ref, the note must NOT be flagged.
+		var wiki = setupWiki([
+			{title: "knowledge/topics/python/intro",
+			 text: "See [[advanced]].",
+			 context: "knowledge/topics/python",
+			 tags: "$:/tags/rimir/knowledge-app/note"},
+			{title: "knowledge/topics/python/advanced", text: ""}
+		]);
+		wiki.addTiddler({title: "$:/config/rimir/namespace/implicit-context", text: "yes"});
+		flags.invalidate();
+		expect(run(wiki, "[[knowledge/topics/python/intro]knowledge-has-broken-ref[]]"))
+			.toEqual([]);
+	});
 });

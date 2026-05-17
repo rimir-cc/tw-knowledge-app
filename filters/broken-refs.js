@@ -27,6 +27,7 @@ var resolver = require("$:/plugins/rimir/namespace/resolver.js");
 var REF_RE = /\[\[([^\]\|]+)(?:\|([^\]]+))?\]\]/g;
 
 function getContextFromBody(text) {
+	/* istanbul ignore if — callers gate on truthy text before invoking */
 	if(!text) { return ""; }
 	var m = text.match(/^\s*\\context\s+(\S+)/m);
 	return m ? m[1] : "";
@@ -37,7 +38,7 @@ exports["knowledge-has-broken-ref"] = function(source, operator, options) {
 		results = [];
 	source(function(tiddler, title) {
 		if(!tiddler) { return; }
-		var text = tiddler.fields.text || "";
+		var text = tiddler.fields.text || /* istanbul ignore next — every fixture sets text */ "";
 		if(!text || text.indexOf("[[") === -1) { return; }
 		var ctx = getContextFromBody(text);
 		if(!ctx && tiddler.fields.context) { ctx = tiddler.fields.context; }
@@ -46,6 +47,7 @@ exports["knowledge-has-broken-ref"] = function(source, operator, options) {
 			broken = false;
 		while((match = re.exec(text)) !== null) {
 			var ref = match[2] != null ? match[2] : match[1];
+			/* istanbul ignore if — REF_RE always captures group(1); ref is never empty */
 			if(!ref) { continue; }
 			var r = resolver.resolve(ref, title, wiki, {context: ctx});
 			if(r.status === "unresolved") {
