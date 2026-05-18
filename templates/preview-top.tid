@@ -1,0 +1,8 @@
+title: $:/plugins/rimir/knowledge-app/templates/preview-top
+type: text/vnd.tiddlywiki
+
+\import $:/plugins/rimir/knowledge-app/procedures/type-pill
+
+<$list filter="[<previewTitle>prefix[knowledge/]]" variable="_">
+<$transclude $variable="kn-type-pill" noteTitle=<<previewTitle>> interactive="yes"/>
+</$list>

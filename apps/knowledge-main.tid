@@ -1,0 +1,22 @@
+tags: $:/tags/rimir/appify/view
+title: $:/plugins/rimir/knowledge-app/apps/knowledge-main
+type: text/vnd.tiddlywiki
+
+\import $:/plugins/rimir/knowledge-app/procedures/filter-chips
+
+<div class="kn-app kn-main">
+
+<div class="kn-filter-strip">
+<<kn-tier-filter-chips>>
+<<kn-type-filter-chips>>
+</div>
+
+<div class="kn-mindmap-pane">
+<$mindmap
+	view="$:/plugins/rimir/knowledge-app/views/knowledge-mindmap-view"
+	state="kn-main"
+	onSelectActions="""<$action-statewrap-set channel="note" value={{{ [<nodeId>mindmap-title-for-op[]] }}}/>"""
+/>
+</div>
+
+</div>

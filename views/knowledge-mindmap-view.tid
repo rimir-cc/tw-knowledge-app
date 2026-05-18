@@ -1,0 +1,15 @@
+title: $:/plugins/rimir/knowledge-app/views/knowledge-mindmap-view
+mm.producer: knowledge-tree
+mm.args: {"include-areas-root":"yes","collapse-below-depth":"1","node-filter":"[all[shadows+tiddlers]prefix[knowledge/]] +[kn-active-node-filter[]]","node-filter-watch":"[[$:/state/rimir/knowledge-app/filter/tiers]] [[$:/state/rimir/knowledge-app/filter/types]]"}
+mm.preview-top-template: $:/plugins/rimir/knowledge-app/templates/preview-top
+mm.backlinks-filter: [<previewTitle>ns-backlinks[]]
+mm.outgoing-filter: [<previewTitle>ns-forwardlinks[]]
+
+Mindmap view tiddler for the knowledge-app navigation pane.
+
+* `include-areas-root: yes` — forest mode (all areas as roots under a synthetic "Knowledge" root).
+* `collapse-below-depth: 1` — area roots stay expanded, their children start collapsed (overlay overrides on user expand and persists across reloads).
+* `node-filter` references the `kn-active-node-filter` operator which reads the chip-state tiddlers and narrows the tree to matching `kn.tier` × `kn.type` combinations.
+* `node-filter-watch` declares the chip-state tiddlers as reproduce triggers so chip clicks refresh the mindmap.
+* `mm.preview-top-template` contributes the `kn.type` pill above the body in the preview pane.
+* `mm.backlinks-filter` / `mm.outgoing-filter` use the namespace plugin's `ns-backlinks` / `ns-forwardlinks` (smarter than core `backlinks` / `links` because they follow context-resolution).

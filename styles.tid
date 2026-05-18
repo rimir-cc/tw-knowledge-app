@@ -26,12 +26,6 @@ type: text/vnd.tiddlywiki
 .kn-topbar-btn:hover { background: rgba(0,0,0,0.05); }
 .kn-topbar-active { background: rgba(0,0,0,0.08); font-weight: bold; }
 .kn-topbar-spacer { flex: 1; }
-.kn-topbar-search input {
-    padding: 4px 8px;
-    border: 1px solid <<colour tiddler-border>>;
-    border-radius: 4px;
-    min-width: 180px;
-}
 
 /* Area pill row */
 .kn-topbar-areas { font-size: 13px; }
@@ -50,67 +44,6 @@ type: text/vnd.tiddlywiki
     border: 1px dashed <<colour tiddler-border>>;
 }
 .kn-area-add:hover { color: <<colour foreground>>; }
-
-/* Back button + breadcrumb row */
-.kn-nav-row { gap: 8px; }
-.kn-back-btn {
-    padding: 2px 8px;
-    color: <<colour muted-foreground>>;
-    font-size: 0.9em;
-    cursor: pointer;
-}
-.kn-back-btn:hover { color: <<colour foreground>>; background: rgba(0,0,0,0.05); border-radius: 3px; }
-
-/* Sidebar */
-.kn-side { padding: 8px; font-size: 13px; }
-.kn-side-section { font-weight: 700; margin: 8px 0 4px; }
-.kn-collapsible-header {
-    display: block;
-    width: 100%;
-    padding: 4px 0;
-    text-align: left;
-    background: none;
-    border: none;
-    cursor: pointer;
-}
-.kn-collapsible-header:hover { background: rgba(0,0,0,0.04); }
-.kn-collapse-chevron {
-    display: inline-block;
-    width: 1em;
-    color: <<colour muted-foreground>>;
-    margin-right: 2px;
-    font-size: 0.85em;
-}
-.kn-nav-item {
-    display: block;
-    width: 100%;
-    padding: 4px 10px;
-    margin: 1px 0;
-    border: none;
-    border-radius: 4px;
-    background: none;
-    text-align: left;
-    cursor: pointer;
-    font-size: 13px;
-}
-.kn-nav-item:hover { background: rgba(0,0,0,0.05); }
-.kn-nav-item.kn-selected { background: rgba(0,0,0,0.08); font-weight: bold; }
-
-/* Tier pills */
-.kn-tier-pill {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 999px;
-    font-size: 0.75em;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    border: none;
-    cursor: pointer;
-}
-.kn-tier-fleeting { background: #fdebd0; color: #7a4f01; }
-.kn-tier-developing { background: #d4e6f1; color: #1b4f72; }
-.kn-tier-evergreen { background: #d4efdf; color: #145a32; }
 
 /* Type pill */
 .kn-type-pill {
@@ -201,15 +134,6 @@ type: text/vnd.tiddlywiki
 .kn-note-card-title { flex: 1; font-weight: 500; }
 .kn-note-card-meta { font-size: 0.8em; color: <<colour muted-foreground>>; }
 
-/* Write maintenance grid */
-.kn-write-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 16px;
-}
-.kn-write-col h3 { margin-top: 0; font-size: 1em; }
-.kn-write-empty { color: <<colour muted-foreground>>; font-style: italic; font-size: 0.9em; }
-
 /* Filter chips */
 .kn-chips { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
 .kn-chip {
@@ -221,6 +145,28 @@ type: text/vnd.tiddlywiki
     cursor: pointer;
 }
 .kn-chip.kn-chip-active { background: <<colour primary>>; color: white; border-color: <<colour primary>>; }
+
+/* Main view: filter strip on top, full-width mindmap below (mindmap has its
+   own internal preview pane on the right edge). */
+.kn-main { display: flex; flex-direction: column; height: 100%; min-height: 0; }
+.kn-filter-strip {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px;
+    border-bottom: 1px solid <<colour tiddler-border>>;
+}
+.kn-filter-label { color: <<colour muted-foreground>>; margin: 0 4px 0 8px; }
+.kn-filter-label:first-child { margin-left: 0; }
+.kn-mindmap-pane {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.kn-mindmap-pane > .rr-mindmap { flex: 1 1 auto; min-height: 0; }
 
 /* Capture modal */
 .kn-modal-overlay {

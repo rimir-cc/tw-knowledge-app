@@ -3,17 +3,19 @@
     "description": "Zettelkasten-style knowledge app on top of namespace + appify",
     "name": "knowledge app",
     "author": "rimir",
-    "version": "0.1.18",
+    "version": "0.1.20",
     "core-version": ">=5.4.0",
     "plugin-type": "plugin",
     "dependents": [
         "$:/plugins/rimir/appify",
+        "$:/plugins/rimir/mindmap",
         "$:/plugins/rimir/namespace",
         "$:/plugins/rimir/statewrap",
         "$:/plugins/rimir/theme"
     ],
     "soft-dependents": [
-        "$:/plugins/rimir/doc-template"
+        "$:/plugins/rimir/doc-template",
+        "$:/plugins/rimir/mindmap-elixir"
     ],
-    "list": "readme documentation settings home browse note write changelog license"
+    "list": "readme documentation settings changelog license"
 }

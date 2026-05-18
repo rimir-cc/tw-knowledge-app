@@ -1,0 +1,37 @@
+title: $:/plugins/rimir/knowledge-app/procedures/filter-chips
+type: text/vnd.tiddlywiki
+
+\procedure kn-filter-chip(chipId stateTitle label tooltip)
+<$button class={{{ [<stateTitle>get[text]enlist-input[]match<chipId>then[kn-chip kn-chip-active]] ~[[kn-chip]] }}} tooltip=<<tooltip>>>
+<$list filter="[<stateTitle>get[text]enlist-input[]match<chipId>]" variable="_" emptyMessage="""<$action-listops $tiddler=<<stateTitle>> $field="text" $subfilter="+[<chipId>]"/>""">
+<$action-listops $tiddler=<<stateTitle>> $field="text" $subfilter="-[<chipId>]"/>
+</$list>
+<<label>>
+</$button>
+\end
+
+\procedure kn-tier-filter-chips()
+<$let stateTitle="$:/state/rimir/knowledge-app/filter/tiers">
+<small class="kn-filter-label">Tier:</small>
+<$transclude $variable="kn-filter-chip" chipId="fleeting"   stateTitle=<<stateTitle>> label="🪶 Fleeting"   tooltip="Show only fleeting notes"/>
+<$transclude $variable="kn-filter-chip" chipId="developing" stateTitle=<<stateTitle>> label="🌱 Developing" tooltip="Show only developing notes"/>
+<$transclude $variable="kn-filter-chip" chipId="evergreen"  stateTitle=<<stateTitle>> label="🌳 Evergreen"  tooltip="Show only evergreen notes"/>
+</$let>
+\end
+
+\procedure kn-type-filter-chips()
+<$let stateTitle="$:/state/rimir/knowledge-app/filter/types">
+<small class="kn-filter-label">Type:</small>
+<$list filter="[{$:/config/rimir/knowledge-app/types}jsonindexes[]]" variable="idx">
+<$let
+	tId={{{ [{$:/config/rimir/knowledge-app/types}jsonget<idx>,[id]] }}}
+	tCaption={{{ [{$:/config/rimir/knowledge-app/types}jsonget<idx>,[caption]] }}}
+	tIcon={{{ [{$:/config/rimir/knowledge-app/types}jsonget<idx>,[icon]] }}}
+	tLabel={{{ [<tIcon>addsuffix[ ]addsuffix<tCaption>] }}}
+	tTooltip={{{ [[Show only ]addsuffix<tCaption>addsuffix[ notes]] }}}
+>
+<$transclude $variable="kn-filter-chip" chipId=<<tId>> stateTitle=<<stateTitle>> label=<<tLabel>> tooltip=<<tTooltip>>/>
+</$let>
+</$list>
+</$let>
+\end
