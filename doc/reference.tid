@@ -12,8 +12,9 @@ type: text/vnd.tiddlywiki
 
 | Tag | Purpose |
 |`$:/tags/rimir/knowledge-app/note` | identifies a knowledge note for `knowledge.notes()` and friends |
+|`$:/tags/rimir/knowledge-app/area` | identifies an area tiddler (registry for the mindmap producer + topbar pills); `area-id` field is the slug |
 |`$:/tags/rimir/appify/app` | (on `apps/knowledge`) registers the app with appify |
-|`$:/tags/rimir/appify/view` | (on `views/*`, `apps/knowledge-topbar`, `apps/knowledge-sidebar`) marks an appify view tiddler |
+|`$:/tags/rimir/appify/view` | (on `apps/knowledge-topbar`, `apps/knowledge-main`) marks an appify view tiddler |
 |`$:/tags/NamespaceMount` | (on `config/starter-mount`) registers the `kn` mount |
 |`$:/tags/Stylesheet` | (on `styles`) makes the CSS shadow active |
 |`$:/tags/test-spec` | (on `test/test-*.js`) discovered by the Jasmine runner |
@@ -21,11 +22,18 @@ type: text/vnd.tiddlywiki
 !! Channels
 
 | Channel | Domain |
-|`section`| `home` \| `browse` \| `note` \| `write` \| `search` |
-|`topic` | first segment after `knowledge/` (or empty) |
-|`note` | full title of the focused note (or empty) |
+|`area` | area-id (e.g. `llm`) or empty — drives the capture modal's target area |
+|`note` | full title of the selected note (or empty) — set by mindmap `onSelectActions`, drives the preview |
 
-!! State tiddlers
+!! Filter chip state
+
+| Title | Format | Use |
+|`$:/state/rimir/knowledge-app/filter/tiers` | TW title list | Multi-select tier chips above the mindmap (`fleeting` / `developing` / `evergreen`) |
+|`$:/state/rimir/knowledge-app/filter/types` | TW title list | Multi-select type chips above the mindmap (15 types from `config/types`) |
+
+Empty list = no constraint on that axis. Mindmap reproduces via `node-filter-watch` declared on the view tiddler.
+
+!! Capture / modal state
 
 | Title | Use |
 |`$:/state/rimir/knowledge-app/capture/open` | "yes" while quick-capture modal is visible |
@@ -34,31 +42,44 @@ type: text/vnd.tiddlywiki
 |`$:/state/rimir/knowledge-app/capture/type` | bound to the modal's type select |
 |`$:/state/rimir/knowledge-app/capture/source/<field>` | per-field state for the source capture form (`caption`, `author`, `medium`, `url`, `published`, `published-mode`, `consume-status`, `consume-date`) |
 |`$:/state/rimir/knowledge-app/capture/last-saved` | title of the most recently captured note |
+|`$:/state/rimir/knowledge-app/area-modal/open` | "yes" while the create-area modal is visible (also `/id`, `/caption`, `/icon`) |
 |`$:/state/rimir/knowledge-app/source-edit/<noteTitle>` | name of the source field currently being inline-edited (or blank) |
 |`$:/state/rimir/knowledge-app/source-yt-size/<noteTitle>` | `small` (default) / `medium` / `large` — chosen YouTube player size |
-|`$:/state/rimir/knowledge-app/search-query` | live search input |
-|`$:/state/rimir/knowledge-app/browse/tier` | currently active tier chip in Browse |
 |`$:/state/rimir/knowledge-app/popup-edit/target` | title of the note being edited in the popup; empty when modal closed |
 |`$:/state/rimir/knowledge-app/popup-edit/title-lock` | `yes` hides the EditTemplate title row and disables the title input — set by callers (e.g. tw-mindmap) that have pre-derived the title and don't want it renamed. Cleared by Save and Cancel |
+|`$:/state/rimir/knowledge-app/type-popup/<noteTitle>` | per-note popup state for the interactive type pill (in the mindmap preview-top template) |
+
+!! Mindmap-side state (per-widget)
+
+| Title | Use |
+|`$:/state/rimir/mindmap/kn-main/preview-title` | currently selected node's backing tiddler (mirrors `note` channel) |
+|`$:/state/rimir/mindmap/kn-main/overlay` | per-user collapse / hide / reorder ops (overrides the producer's BASE collapse defaults) |
+|`$:/state/rimir/mindmap/kn-main/focus-title` | active focus root (Shift+F / step-out toolbar) |
+
+Replace `kn-main` with the `state=` attr value used on the `<$mindmap>` widget if you spawn additional instances.
 
 !! Config tiddlers
 
 | Title | Default |
+|`$:/config/rimir/knowledge-app/types` | JSON array of 15 type definitions (id / caption / icon / group) |
 |`$:/config/rimir/knowledge-app/stub-threshold` | `200` |
 |`$:/config/rimir/knowledge-app/capture-prefix` | `knowledge/inbox/` |
+|`$:/config/rimir/knowledge-app/breadcrumb-max-entries` | `5` |
 |`$:/config/rimir/namespace/walk-up` | `yes` (this plugin overrides the namespace default) |
 |`$:/config/rimir/namespace/aliases` | `yes` |
 |`$:/config/rimir/namespace/pseudo-expansion` | `yes` |
+|`$:/config/rimir/namespace/self-prefix` | `yes` |
 
 !! Filter operators (defined here)
 
-* `[<title>knowledge-has-broken-ref[]]` — input title if its body contains at least one unresolved `[[…]]`, else nothing.
+* `[<source>knowledge-has-broken-ref[]]` — keeps input titles whose body contains at least one unresolved `[[…]]`.
+* `[<source>kn-active-node-filter[]]` — keeps input titles whose `kn.tier` × `kn.type` match the active filter chip selection; empty selection on an axis means "no constraint" on that axis.
 
 !! Filter functions
 
 * `\function knowledge.notes()` — all knowledge notes
-* `\function knowledge.orphans()` — zero backlinks
-* `\function knowledge.dead-ends()` — zero forward links
+* `\function knowledge.orphans()` — zero `ns-backlinks`
+* `\function knowledge.dead-ends()` — zero `ns-forwardlinks`
 * `\function knowledge.stubs()` — body length below threshold
 * `\function knowledge.broken()` — at least one unresolved ref
 
@@ -74,8 +95,19 @@ Defined in `forms/source-helpers.tid`, imported by `forms/capture-source` and `f
 
 | Title | Use |
 |`forms/capture-<type>` | extra modal fields for `<type>`. Transcluded by `procedures/quick-capture-modal` when the type select matches |
-|`forms/render-<type>` | structured display for `<type>`. Transcluded by `views/note` above the body when the note's `kn.type` matches |
+|`forms/render-<type>` | structured display for `<type>`. Currently ''orphan'' — re-integration into the mindmap preview is pending (will be wired via a custom `mm.preview-body-template`) |
 |`forms/<type>-helpers` | shared `\function`s for the type's two halves (imported via `\import`) |
+
+!! Mindmap view tiddler
+
+`views/knowledge-mindmap-view.tid` — fields:
+
+| Field | Value |
+|`mm.producer` | `knowledge-tree` |
+|`mm.args` (JSON) | `include-areas-root: yes`, `collapse-below-depth: 1`, `node-filter: [all[shadows+tiddlers]prefix[knowledge/]] +[kn-active-node-filter[]]`, `node-filter-watch: [[$:/state/rimir/knowledge-app/filter/tiers]] [[$:/state/rimir/knowledge-app/filter/types]]` |
+|`mm.preview-top-template` | `$:/plugins/rimir/knowledge-app/templates/preview-top` |
+|`mm.backlinks-filter` | `[<previewTitle>ns-backlinks[]]` |
+|`mm.outgoing-filter` | `[<previewTitle>ns-forwardlinks[]]` |
 
 !! Pseudo modules
 

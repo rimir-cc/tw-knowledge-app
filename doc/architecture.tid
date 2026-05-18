@@ -10,29 +10,40 @@ type: text/vnd.tiddlywiki
 
 !! Layers
 
-# ''Storage'' — plain TW tiddlers under `knowledge/…`, tagged `$:/tags/rimir/knowledge-app/note`, with `kn.tier` field.
-# ''Resolution'' — namespace plugin handles `[[Foo]]` resolution via its 9-stage pipeline (literal → alias → mount → pseudo → walk-up → unresolved). The app enables walk-up + aliases + pseudo-expansion on install.
-# ''App shell'' — appify framework. App declared at `$:/plugins/rimir/knowledge-app/apps/knowledge` with channels `section topic note` and a `topbar-sidebar-main` layout.
-# ''Views'' — five sections: Home, Browse, Note, Write, Search. Switched via `section` channel; clicking a topic in the sidebar navigates with `topic` set.
+# ''Storage'' — plain TW tiddlers under `knowledge/…`, tagged `$:/tags/rimir/knowledge-app/note`, with `kn.tier` / `kn.type` fields and free-form body.
+# ''Resolution'' — namespace plugin handles `[[Foo]]` resolution via its 9-stage pipeline (literal → alias → mount → pseudo → walk-up → unresolved). The app enables walk-up + aliases + pseudo-expansion + self-prefix on install.
+# ''App shell'' — appify framework. App declared at `$:/plugins/rimir/knowledge-app/apps/knowledge` with channels `area note` and the `topbar-main` layout (topbar row + full-width main).
+# ''Navigation'' — `apps/knowledge-main` renders a multi-select filter chip strip (tier + type) above a full-width `<$mindmap>` widget. The mindmap consumes `views/knowledge-mindmap-view`, which binds the `knowledge-tree` producer in forest mode with `collapse-below-depth: 1` (area roots expanded, descendants collapsed initially).
+# ''Preview'' — built into the mindmap (right edge of the canvas). The mindmap's `mm.preview-top-template` extension point pulls in `templates/preview-top.tid`, which surfaces the `kn-type-pill` interactive popup above the body. Below the body, the mindmap's built-in backlinks/outgoing panel renders using `ns-backlinks` / `ns-forwardlinks` (configured via `mm.backlinks-filter` / `mm.outgoing-filter` on the view tiddler).
 
 !! Channels
 
 | Channel | Set by | Read by |
-|`section`| Topbar buttons, breadcrumb, `$action-statewrap-navigate` | Splits config (decides which view to render) |
-|`topic` | Sidebar topic-tree buttons | Browse view (filters by topic prefix) |
-|`note` | Note-card buttons, search results, capture | Note view (chooses which note to render) |
+|`area` | Topbar area pills | Capture modal (target area for new notes) |
+|`note` | Mindmap node-select (via `mindmap-title-for-op` operator in `onSelectActions`) | Mindmap preview pane internally — exposed for any external consumers |
 
-!! Filter helpers
+!! Filter chip state
 
-`filters/helpers.tid` exposes:
+| State tiddler | Format | Toggled by |
+|`$:/state/rimir/knowledge-app/filter/tiers` | TW title list | `procedures/filter-chips.tid` tier chips |
+|`$:/state/rimir/knowledge-app/filter/types` | TW title list | `procedures/filter-chips.tid` type chips |
+
+Empty list = no constraint on that axis. The mindmap reproduces on changes via the `node-filter-watch` arg on the view tiddler.
+
+!! Filter operators
+
+* `[<title>knowledge-has-broken-ref[]]` — input title if its body contains at least one unresolved `[[…]]`, else nothing.
+* `[<source>kn-active-node-filter[]]` — filters the input set down to tiddlers whose `kn.tier` × `kn.type` match the active chip selection (empty axis = unconstrained). Wired into the mindmap via the view's `mm.args.node-filter`.
+
+!! Filter functions
+
+`filters/helpers.tid` exposes the diagnostic functions (currently no live UI consumer, but they're useful from the LLM tools and external probes):
 
 * `\function knowledge.notes()` — all notes via the system tag
 * `\function knowledge.orphans()` — notes with zero `ns-backlinks`
 * `\function knowledge.dead-ends()` — notes with zero `ns-forwardlinks`
 * `\function knowledge.stubs()` — notes whose body is shorter than the configured threshold
 * `\function knowledge.broken()` — notes whose body contains an unresolved `[[ref]]`
-
-The broken-ref detector is a JS filter operator (`knowledge-has-broken-ref`) that scans the body and asks the resolver about each `[[…]]` match.
 
 !! Custom pseudo
 
@@ -42,12 +53,21 @@ The broken-ref detector is a JS filter operator (`knowledge-has-broken-ref`) tha
 
 Each note type (defined in `config/types.tid`) can opt into two extension points:
 
-# ''Capture form'' — `forms/capture-<type>`. Transcluded inside the quick-capture modal between the type select and the body textarea (only when the chosen type has a matching tiddler). Inputs bind to dedicated state tiddlers under `$:/state/rimir/knowledge-app/capture/<type>/<field>` so they survive type-switching and don't collide with the generic title/body state. The Create action of the modal applies the captured values via a per-type `<$action-setfield>` block, then resets that state.
-# ''Render form'' — `forms/render-<type>`. Transcluded in `views/note` ''above'' the body, with the outer `<<noteTitle>>` variable in scope. Reads `kn.*` fields from the note and produces a structured card (table, embeds, controls). Free to provide its own inline-edit affordances (the `source` form uses one state tiddler per note at `$:/state/rimir/knowledge-app/source-edit/<noteTitle>` whose text is the field name being edited).
+# ''Capture form'' — `forms/capture-<type>`. Transcluded inside the quick-capture modal between the type select and the body textarea (only when the chosen type has a matching tiddler). Inputs bind to dedicated state tiddlers under `$:/state/rimir/knowledge-app/capture/<type>/<field>` so they survive type-switching and don't collide with the generic title/body state.
+# ''Render form'' — `forms/render-<type>`. Currently ''orphan'' — the previous `views/note.tid` (still on disk) transcluded `forms/render-<noteType>` above the body. With the mindmap-driven preview, render-forms are not yet wired in. Re-introduction is planned via a custom `mm.preview-body-template` that dispatches on `kn.type` before falling through to the default body template.
 
-Helpers shared between the two halves of a type live in `forms/<type>-helpers.tid` and are pulled in via `\import`. The `source` type uses `forms/source-helpers.tid` for `knowledge.yt-id`, `knowledge.medium-icon`, `knowledge.consume-icon`.
+Helpers shared between the two halves of a type live in `forms/<type>-helpers.tid` and are pulled in via `\import`.
 
-Adding a new type is therefore: declare it in `config/types.tid` and (optionally) add `forms/capture-<id>.tid` and/or `forms/render-<id>.tid`. No core code change.
+!! Mindmap integration
+
+The whole navigation + preview surface lives inside `$mindmap`:
+
+* ''Producer'' — `knowledge-tree` (shipped from `rimir/mindmap`), forest mode (`include-areas-root: yes`). Reads area tiddlers tagged `$:/tags/rimir/knowledge-app/area` and walks `knowledge/<area>/…` titles.
+* ''Initial collapse'' — `collapse-below-depth: 1` marks every node deeper than the area root as `core:collapsed=true` in the BASE MDOM. The overlay (per-widget state) overrides on user expand, so chosen branches stay open across reloads.
+* ''Node filter'' — `[all[shadows+tiddlers]prefix[knowledge/]] +[kn-active-node-filter[]]` runs against the chip state. The producer prunes the tree bottom-up with ancestor preservation: a node survives if its `core:tiddler` matches OR any descendant matches.
+* ''Selection wiring'' — `onSelectActions` on the widget calls `<$action-statewrap-set channel="note" value={{{ [<nodeId>mindmap-title-for-op[]] }}}/>`. The `mindmap-title-for-op` operator (in `rimir/mindmap`) dispatches across producers' `titleForOp` functions.
+* ''Type pill'' — `templates/preview-top.tid` is bound via `mm.preview-top-template`. It transcludes the existing `kn-type-pill` procedure with `interactive=yes`, surfacing the 15-type popup grouped core / entity / structural above the body.
+* ''Backlinks/Outgoing'' — built into the mindmap preview (mindmap ≥ 0.2.29). The knowledge-app view overrides the default `backlinks[]` / `links[]` operators with `ns-backlinks[]` / `ns-forwardlinks[]` so namespace-resolved references are counted. Clicking an entry re-selects that node in the canvas.
 
 </$fill>
 </$transclude>

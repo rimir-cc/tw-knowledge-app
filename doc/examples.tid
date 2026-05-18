@@ -10,7 +10,7 @@ type: text/vnd.tiddlywiki
 
 !! Capturing a fleeting note
 
-Click ''+ Note'' in the topbar. Type ''typescript-tips'' and submit. A new tiddler appears at `knowledge/inbox/typescript-tips` with body:
+Click an area pill (e.g. ''llm'') in the topbar, then ''+ Note''. Type ''typescript-tips'' and submit. A new tiddler appears at `knowledge/llm/typescript-tips` (or `knowledge/inbox/typescript-tips` if no area was active) with body:
 
 ```
 \context knowledge
@@ -41,7 +41,7 @@ In a note titled `knowledge/topics/programming/typescript/Foo`, write:
 See also [[Bar]] for details, or [[topics/python/Snake]] for the cousin language.
 ```
 
-The namespace walk-up resolves `[[Bar]]` against the source's path: tries `knowledge/topics/programming/typescript/Bar`, then `knowledge/topics/programming/Bar`, then `knowledge/topics/Bar`, etc. The absolute path `topics/python/Snake` is not absolute (no leading `/`) — it walks up too: `knowledge/topics/programming/typescript/topics/python/Snake` (no), then `…/programming/topics/python/Snake` (no), then `…/topics/topics/python/Snake` (no), then `…/topics/python/Snake` (yes, if it exists).
+The namespace walk-up resolves `[[Bar]]` against the source's path: tries `knowledge/topics/programming/typescript/Bar`, then `knowledge/topics/programming/Bar`, then `knowledge/topics/Bar`, etc. The relative path `topics/python/Snake` walks up too: `…/typescript/topics/python/Snake` (no), `…/programming/topics/python/Snake` (no), `…/topics/python/Snake` (yes, if it exists).
 
 !! Cross-app linking
 
@@ -57,9 +57,13 @@ The starter mount `kn → knowledge` rewrites the prefix, and the link resolves 
 
 Create a tiddler `knowledge/topics/typescript/index` summarising the topic. From any note in that tree (or anywhere with the right context), write `[[knowledge/topics/typescript/_index]]` — the `_index` pseudo expands to `index` (or `README`) at that prefix.
 
-!! Promote a note
+!! Filtering the mindmap
 
-In Note view, click the tier pill. It cycles `fleeting → developing → evergreen → fleeting`. Tier counts on Home and the sidebar update immediately.
+Click ''🌳 Evergreen'' in the chip strip above the mindmap. The tree prunes to evergreen-tier notes ''plus their ancestors'' (so the path stays visible). Click again to deselect. Add ''📚 Source'' (type chip) to intersect: the canvas now shows only evergreen sources and the area roots leading to them. Click chips again to clear.
+
+!! Changing a note's type
+
+In the mindmap preview pane (right edge), click the type pill at the top of the body (e.g. ''💡 Idea''). A popup opens with all 15 types grouped Core / Entity / Structural. Pick a new one — the `kn.type` field is updated in place, and the type chip filter above the mindmap will treat the note accordingly on the next chip click.
 
 !! Capture a source note (TZK-style)
 
@@ -73,12 +77,7 @@ Click ''+ Note'', set ''Type'' to ''Source''. Extra fields appear:
 * ''Consume status'' — created / partial / consumed / reconsumed.
 * ''Consume date'' — date picker.
 
-After Create, the new note opens with a structured ''source card'' above the body:
-
-* If the URL parses to a YouTube video ID (e.g. `https://www.youtube.com/watch?v=…`, `https://youtu.be/…`, `https://www.youtube.com/embed/…`), an embedded player appears at the top with three size buttons below it (small / medium / large; small by default per note).
-* The card header shows the medium icon + caption (or the title if no caption was set).
-* Below, a definition list lists Author, Medium (icon + name), Published, URL (clickable), Status (icon + name), Consumed.
-* Hovering any row reveals a pen icon — click it to inline-edit just that field; click ✓ to save and exit.
+After Create, the new note's fields are stamped. Note: as of 0.1.20 the structured "source card" render (YouTube embed + definition list) is temporarily unwired — the previous note-view that hosted `forms/render-source` was retired with the section model. Re-integration via a custom `mm.preview-body-template` is on the follow-up list; in the meantime, the source fields are visible in the field bar of the popup editor.
 
 </$fill>
 </$transclude>

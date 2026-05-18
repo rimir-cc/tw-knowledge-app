@@ -24,7 +24,9 @@ Tests live in `test/test-*.js` (tagged `$:/tags/test-spec`):
 * `test-helpers.js` — filter `\function`s in the dev-wiki context
 * `test-broken-refs.js` — `knowledge-has-broken-ref` filter operator
 * `test-pseudo-index.js` — `_index` pseudo (registration + end-to-end resolution)
-* `test-tier-pill.js` — pill class + cycle behaviour
+* `test-areas.js` — area-tiddler shape + ID derivation
+* `test-types.js` — type registry shape
+* `test-source-helpers.js` — `knowledge.yt-id`, `knowledge.medium-icon`, `knowledge.consume-icon`
 * `test-capture-action.js` — the quick-capture action sequence
 
 !! Run Playwright E2E
@@ -34,20 +36,32 @@ npx playwright test tw-tests/tests/e2e/knowledge-app.spec.js \
   --config tw-tests/playwright.config.js
 ```
 
-The Playwright wiki (`tw-tests/pw-edition/`) loads the plugin and exposes the HTTP API for fixtures.
+The Playwright wiki (`tw-tests/pw-edition/`) loads the plugin and exposes the HTTP API for fixtures. Note: the existing spec was written against the pre-0.1.20 section-based UI and needs rewriting to match the mindmap-driven shell.
 
 !! Restart rules
 
 | Change | Restart? |
 |JS pseudo (`pseudo/_index.js`) | yes (module reload) |
-|JS filter (`filters/broken-refs.js`) | yes (module reload) |
-|All `.tid` (apps, views, procedures, filters, config) | no (live re-read) |
+|JS filter (`filters/broken-refs.js`, `filters/active-node-filter.js`) | yes (module reload) |
+|JS startup (`modules/focus-rewind.js`) | yes |
+|All `.tid` (apps, views, procedures, filters, config, templates) | no (live re-read) |
 
-!! Adding a new view
+!! Adding a new note type
 
-# Create `views/<name>.tid` with `tags: $:/tags/rimir/appify/view` and a `<div class="kn-app">…</div>` body.
-# Append to `apps/knowledge-splits.tid` JSON: `{ "view": "$:/plugins/rimir/knowledge-app/views/<name>", "label": "…", "condition": "[statewrap-get[section]match[<name>]]" }`.
-# Add a button to `apps/knowledge-topbar.tid` that sets `section=<name>`.
+# Append an entry to `config/types.tid` (JSON: `id`, `caption`, `icon`, `group`).
+# Optional: ship `forms/capture-<id>.tid` (extra modal fields). State tiddlers should live under `$:/state/rimir/knowledge-app/capture/<id>/<field>`.
+# Optional: ship `forms/<id>-helpers.tid` with shared `\function`s; `\import` from the capture form. (`forms/render-<id>` is on hold pending a custom `mm.preview-body-template` that dispatches on `kn.type`.)
+# Patch-bump `plugin.info` version + add a `changelog.tid` row.
+
+The new type appears in the quick-capture modal's type select, in the interactive type pill at the top of the mindmap preview, and as a chip in the filter strip above the mindmap.
+
+!! Adding a new mindmap producer arg
+
+`knowledge-tree` lives in `rimir/mindmap` (`producers/knowledge-tree.js`). Add the arg to `exports.describe()`, handle it in `produce()` (or in `applyPostBuildArgs()` for purely post-processing args), and — if reproduce should fire when the arg's referenced tiddlers change — append them via `exports.refreshFilter()`. Update `views/knowledge-mindmap-view.tid`'s `mm.args` JSON to set the new arg.
+
+!! Adding a new area
+
+Create a tiddler tagged `$:/tags/rimir/knowledge-app/area` with fields `area-id` (the slug), `caption`, `icon`, optional `color`. The topbar's `+ Area` button does this via the area modal. The new area appears as a top-level node in the mindmap and as a pill in the topbar.
 
 </$fill>
 </$transclude>

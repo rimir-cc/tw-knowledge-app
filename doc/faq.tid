@@ -22,15 +22,25 @@ Set `$:/config/rimir/namespace/walk-up` to `no`. Sibling-walk-up refs will then 
 
 !! What's a "stub"?
 
-A note whose body is shorter than the stub threshold (default 200 characters; configurable in Settings). Stubs appear in the Write tab so you can flesh them out.
+A note whose body is shorter than the stub threshold (default 200 characters; configurable in Settings). The `knowledge.stubs()` filter function returns them. There is no live UI consumer in 0.1.20+ — the Write maintenance tab was removed when the app collapsed to a single mindmap surface — but the function is still useful from the LLM tools and external probes.
 
-!! Why does the Write tab exclude fleeting notes from Orphans / Dead-ends?
+!! How do I promote a note from fleeting to evergreen?
 
-Fleeting notes are inbox material — they're expected to lack incoming and outgoing links. Filtering them out keeps the maintenance views focused on notes that have already been promoted to developing / evergreen.
+The dedicated tier-pill cycler was removed in 0.1.20 along with the section-based note view. Promote by:
+
+* opening the popup-edit modal (✎ button in the mindmap preview pane → ''⛶ Edit''), or
+* editing the `kn.tier` field directly from the field bar, or
+* using an action chain (`<$action-setfield $tiddler=<<note>> kn.tier="evergreen"/>`).
+
+The tier filter chips above the mindmap still read `kn.tier`, so the field is meaningful for filtering even without a dedicated promotion UI.
 
 !! Can knowledge notes link back to orga / priv content?
 
 Yes — write `[[orga/projects/foo]]` from a knowledge note. But the app does NOT surface backlinks FROM knowledge TO orga in the orga app (one-way coupling by design). Backlinks within the knowledge namespace work both ways.
+
+!! Why are some nodes collapsed when I open the app?
+
+The producer marks every node deeper than the area root with `core:collapsed=true` in the BASE MDOM so the initial view stays scannable. Expanding a node writes an override into the widget's overlay tiddler — so your expansions persist across reloads. Reset everything by deleting `$:/state/rimir/mindmap/kn-main/overlay`.
 
 </$fill>
 </$transclude>
