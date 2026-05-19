@@ -49,14 +49,14 @@ Empty list = no constraint on that axis. Mindmap reproduces via `node-filter-wat
 |`$:/state/rimir/knowledge-app/popup-edit/title-lock` | `yes` hides the EditTemplate title row and disables the title input — set by callers (e.g. tw-mindmap) that have pre-derived the title and don't want it renamed. Cleared by Save and Cancel |
 |`$:/state/rimir/knowledge-app/type-popup/<noteTitle>` | per-note popup state for the interactive type pill (in the mindmap preview-top template) |
 
-!! Mindmap-side state (per-widget)
+!! Mindmap-side state
 
 | Title | Use |
+|`$:/state/rimir/knowledge-app/mindmap/overlay` | persisted per-user collapse / expand / hide / reorder ops (declared via `mm.overlay` on the view tiddler — overrides the producer's BASE `collapse-below-depth` defaults so expansions survive every reproduce triggered by add-node, change-type, chip-toggle, etc.) |
 |`$:/state/rimir/mindmap/kn-main/preview-title` | currently selected node's backing tiddler (mirrors `note` channel) |
-|`$:/state/rimir/mindmap/kn-main/overlay` | per-user collapse / hide / reorder ops (overrides the producer's BASE collapse defaults) |
 |`$:/state/rimir/mindmap/kn-main/focus-title` | active focus root (Shift+F / step-out toolbar) |
 
-Replace `kn-main` with the `state=` attr value used on the `<$mindmap>` widget if you spawn additional instances.
+The per-widget `kn-main` segment in the state paths comes from the `state=` attribute on the `<$mindmap>` widget — replace if you spawn additional instances.
 
 !! Config tiddlers
 
@@ -105,6 +105,7 @@ Defined in `forms/source-helpers.tid`, imported by `forms/capture-source` and `f
 | Field | Value |
 |`mm.producer` | `knowledge-tree` |
 |`mm.args` (JSON) | `include-areas-root: yes`, `collapse-below-depth: 1`, `node-filter: [all[shadows+tiddlers]prefix[knowledge/]] +[kn-active-node-filter[]]`, `node-filter-watch: [[$:/state/rimir/knowledge-app/filter/tiers]] [[$:/state/rimir/knowledge-app/filter/types]]` |
+|`mm.overlay` | `$:/state/rimir/knowledge-app/mindmap/overlay` (target tiddler for the widget's auto-persist of expand / collapse / setAttr ops — without this the widget's overlay store is null and user expansions get wiped on every reproduce) |
 |`mm.preview-top-template` | `$:/plugins/rimir/knowledge-app/templates/preview-top` |
 |`mm.backlinks-filter` | `[<previewTitle>ns-backlinks[]]` |
 |`mm.outgoing-filter` | `[<previewTitle>ns-forwardlinks[]]` |

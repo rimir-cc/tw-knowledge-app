@@ -1,8 +1,7 @@
 title: $:/plugins/rimir/knowledge-app/templates/preview-top
 type: text/vnd.tiddlywiki
 
+\whitespace trim
 \import $:/plugins/rimir/knowledge-app/procedures/type-pill
 
-<$list filter="[<previewTitle>prefix[knowledge/]]" variable="_">
-<$transclude $variable="kn-type-pill" noteTitle=<<previewTitle>> interactive="yes"/>
-</$list>
+<$list filter="[<previewTitle>prefix[knowledge/]]" variable="_"><$transclude $variable="kn-type-pill" noteTitle=<<previewTitle>> interactive="yes"/><$let noteType={{{ [<previewTitle>get[kn.type]] }}} fieldsForm={{{ [[$:/plugins/rimir/knowledge-app/forms/render-]addsuffix<noteType>] }}}><$list filter="[<fieldsForm>is[shadow]] [<fieldsForm>is[tiddler]] +[limit[1]]" variable="_"><$let fieldsPopup={{{ [[$:/state/rimir/knowledge-app/fields-popup/]addsuffix<previewTitle>] }}}><$button class="kn-fields-btn" popup=<<fieldsPopup>> popupAbsCoords="yes" tooltip="Edit type-specific fields">✎ Fields</$button><$reveal state=<<fieldsPopup>> type="popup" position="below" animate="yes"><div class="kn-fields-popup kn-escape-popup tc-popup-keep"><$let noteTitle=<<previewTitle>>><$transclude $tiddler=<<fieldsForm>> $mode="block"/></$let></div></$reveal></$let></$list></$let></$list>

@@ -1,6 +1,7 @@
 title: $:/plugins/rimir/knowledge-app/views/knowledge-mindmap-view
 mm.producer: knowledge-tree
 mm.args: {"include-areas-root":"yes","collapse-below-depth":"1","node-filter":"[all[shadows+tiddlers]prefix[knowledge/]] +[kn-active-node-filter[]]","node-filter-watch":"[[$:/state/rimir/knowledge-app/filter/tiers]] [[$:/state/rimir/knowledge-app/filter/types]]"}
+mm.overlay: $:/state/rimir/knowledge-app/mindmap/overlay
 mm.preview-top-template: $:/plugins/rimir/knowledge-app/templates/preview-top
 mm.backlinks-filter: [<previewTitle>ns-backlinks[]]
 mm.outgoing-filter: [<previewTitle>ns-forwardlinks[]]

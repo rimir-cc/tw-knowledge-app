@@ -11,7 +11,7 @@ type: text/vnd.tiddlywiki
 	cls={{{ [[kn-type-pill kn-type-]addsuffix<type>] }}}
 >
 <$list filter="[<interactive>match[yes]]" variable="_">
-<$button class=<<cls>> popup=<<popupState>> tooltip="Pick a card type"><<icon>> <<caption>></$button>
+<$button class=<<cls>> popup=<<popupState>> popupAbsCoords="yes" tooltip="Pick a card type"><<icon>> <<caption>></$button>
 <$reveal state=<<popupState>> type="popup" position="below" animate="yes">
 <div class="kn-type-popup">
 <$list filter="[[core]] [[entity]] [[structural]]" variable="grp">

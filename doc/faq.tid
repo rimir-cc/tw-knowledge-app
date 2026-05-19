@@ -40,7 +40,7 @@ Yes — write `[[orga/projects/foo]]` from a knowledge note. But the app does NO
 
 !! Why are some nodes collapsed when I open the app?
 
-The producer marks every node deeper than the area root with `core:collapsed=true` in the BASE MDOM so the initial view stays scannable. Expanding a node writes an override into the widget's overlay tiddler — so your expansions persist across reloads. Reset everything by deleting `$:/state/rimir/mindmap/kn-main/overlay`.
+The producer marks every node deeper than the area root with `core:collapsed=true` in the BASE MDOM so the initial view stays scannable. Expanding a node writes an override into the widget's overlay tiddler — so your expansions persist across reloads. Reset everything by deleting `$:/state/rimir/knowledge-app/mindmap/overlay`.
 
 </$fill>
 </$transclude>
