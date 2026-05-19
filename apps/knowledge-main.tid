@@ -4,11 +4,19 @@ type: text/vnd.tiddlywiki
 
 \import $:/plugins/rimir/knowledge-app/procedures/filter-chips
 
-<div class="kn-app kn-main">
+<$let h={{{ [[$:/state/rimir/knowledge-app/mindmap/height]get[text]] ~[[medium]] }}}>
+<div class={{{ [[kn-app kn-main kn-h-]addsuffix<h>] }}}>
 
 <div class="kn-filter-strip">
 <<kn-tier-filter-chips>>
 <<kn-type-filter-chips>>
+<span class="kn-filter-sep"/>
+<span class="kn-filter-label">Height</span>
+<$list filter="[[tight]] [[medium]] [[large]]" variable="size">
+<$button class={{{ [<size>match<h>then[kn-chip kn-chip-active]] ~[[kn-chip]] }}} set="$:/state/rimir/knowledge-app/mindmap/height" setTo=<<size>>>
+<$text text=<<size>>/>
+</$button>
+</$list>
 </div>
 
 <div class="kn-mindmap-pane">
@@ -20,3 +28,4 @@ type: text/vnd.tiddlywiki
 </div>
 
 </div>
+</$let>

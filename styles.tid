@@ -194,6 +194,14 @@ type: text/vnd.tiddlywiki
 }
 .kn-filter-label { color: <<colour muted-foreground>>; margin: 0 4px 0 8px; }
 .kn-filter-label:first-child { margin-left: 0; }
+.kn-filter-sep {
+    display: inline-block;
+    width: 1px;
+    height: 18px;
+    background: <<colour tiddler-border>>;
+    margin: 0 8px 0 12px;
+    vertical-align: middle;
+}
 .kn-mindmap-pane {
     flex: 1 1 auto;
     min-height: 0;
@@ -202,6 +210,18 @@ type: text/vnd.tiddlywiki
     overflow: hidden;
 }
 .kn-mindmap-pane > .rr-mindmap { flex: 1 1 auto; min-height: 0; }
+
+/* Height-mode override: tight = current viewport-fit (flex column).
+   medium/large drop the flex layout, give the mindmap an explicit vh
+   height, and let the slot scroll vertically. The mindmap widget's own
+   internal preview pane grows with the canvas. */
+.kn-main.kn-h-medium,
+.kn-main.kn-h-large {
+    display: block;
+    height: auto;
+}
+.kn-main.kn-h-medium .kn-mindmap-pane { height: 80vh; flex: none; overflow: visible; }
+.kn-main.kn-h-large  .kn-mindmap-pane { height: 120vh; flex: none; overflow: visible; }
 
 /* Capture modal */
 .kn-modal-overlay {
